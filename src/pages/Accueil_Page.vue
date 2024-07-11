@@ -62,7 +62,7 @@ color:white;
 
 .menu .icon{
   position: absolute;
-  right: 60px;
+  right: 40px;
   pointer-events: none;
 }       
 </style>
