@@ -59,6 +59,7 @@ aside {
 	padding: 1rem;
 
 	transition: 0.2s ease-in-out;
+    user-select: none;
 
 
 	.logo {
@@ -125,6 +126,8 @@ aside {
 			.text {
 				color: var(--light);
 				transition: 0.2s ease-in-out;
+                white-space: nowrap; // pour éviter le décalage du texte
+
 			}
 
 			&:hover {
