@@ -116,7 +116,7 @@ onBeforeUnmount(() => {
   font-size: 1rem;
   display: flex;
   align-items: center;
-  padding: 1.05rem 1rem;
+  padding: 1.1rem 1rem;
   transition: background-color 0.3s ease-in-out; /* Transition pour le fond */
 }
 
