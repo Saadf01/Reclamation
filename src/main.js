@@ -13,6 +13,12 @@ import {fas} from '@fortawesome/free-solid-svg-icons'
 /* add icons to the library */
 library.add(fas)
 
+// Import de la bibliothèque d'icônes Material Icons
+import 'material-icons/iconfont/material-icons.css';
+
+// Import de la feuille de style de Google Fonts pour Poppins
+import '@fontsource/poppins';
+
 const app = createApp(App)
 
 app.use(router)
