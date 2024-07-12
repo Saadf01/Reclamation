@@ -78,7 +78,7 @@ onBeforeUnmount(() => {
 
 .logo {
   background-color: #006400; 
-  padding: 0.8rem 0rem;
+  padding: 0.9rem 0rem;
   color: white;
   width: var(--sidebar-width); /* Utilisez la variable appropriée */
   display: flex;
