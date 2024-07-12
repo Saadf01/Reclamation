@@ -72,10 +72,10 @@ button {
 
     main {
         flex: 1; /* Contenu principal s'étend pour remplir l'espace restant */
-        padding: 4rem 1rem;
+        padding-top: 3.6rem;
 
         @media (max-width: 1024px) {
-            padding-left: 6rem;
+            padding-left: 4rem;
         }
     }
 }
