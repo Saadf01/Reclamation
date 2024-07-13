@@ -63,9 +63,7 @@ onBeforeUnmount(() => {
   justify-content: space-between;
   align-items: center;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
   z-index: 1000; /* Assure que le header est au-dessus du reste du contenu */
   background-color: #049004;
 }
