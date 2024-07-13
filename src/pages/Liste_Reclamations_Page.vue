@@ -18,42 +18,47 @@
         </div>
         
         <div class="dropdowns">
+          <!-- Dropdown pour Statut -->
           <div class="dropdown">
             <button class="dropbtn">Statut</button>
             <div class="dropdown-content">
-              <label><input type="checkbox" value="Statut 1"> Statut 1</label>
-              <label><input type="checkbox" value="Statut 2"> Statut 2</label>
-              <label><input type="checkbox" value="Statut 3"> Statut 3</label>
+              <label><input type="checkbox" v-model="dropdowns.statut" value="Statut 1"> Statut 1</label>
+              <label><input type="checkbox" v-model="dropdowns.statut" value="Statut 2"> Statut 2</label>
+              <label><input type="checkbox" v-model="dropdowns.statut" value="Statut 3"> Statut 3</label>
             </div>
           </div>
 
+          <!-- Dropdown pour Société -->
           <div class="dropdown">
             <button class="dropbtn">Société</button>
             <div class="dropdown-content">
-              <label><input type="checkbox" value="Société 1"> Société 1</label>
-              <label><input type="checkbox" value="Société 2"> Société 2</label>
-              <label><input type="checkbox" value="Société 3"> Société 3</label>
+              <label><input type="checkbox" v-model="dropdowns.societe" value="Société 1"> Société 1</label>
+              <label><input type="checkbox" v-model="dropdowns.societe" value="Société 2"> Société 2</label>
+              <label><input type="checkbox" v-model="dropdowns.societe" value="Société 3"> Société 3</label>
             </div>
           </div>
 
+          <!-- Dropdown pour Domaine -->
           <div class="dropdown">
             <button class="dropbtn">Domaine</button>
             <div class="dropdown-content">
-              <label><input type="checkbox" value="Domaine 1"> Domaine 1</label>
-              <label><input type="checkbox" value="Domaine 2"> Domaine 2</label>
-              <label><input type="checkbox" value="Domaine 3"> Domaine 3</label>
+              <label><input type="checkbox" v-model="dropdowns.domaine" value="Domaine 1"> Domaine 1</label>
+              <label><input type="checkbox" v-model="dropdowns.domaine" value="Domaine 2"> Domaine 2</label>
+              <label><input type="checkbox" v-model="dropdowns.domaine" value="Domaine 3"> Domaine 3</label>
             </div>
           </div>
 
+          <!-- Dropdown pour Source -->
           <div class="dropdown">
             <button class="dropbtn">Source</button>
             <div class="dropdown-content">
-              <label><input type="checkbox" value="Source 1"> Source 1</label>
-              <label><input type="checkbox" value="Source 2"> Source 2</label>
-              <label><input type="checkbox" value="Source 3"> Source 3</label>
+              <label><input type="checkbox" v-model="dropdowns.source" value="Source 1"> Source 1</label>
+              <label><input type="checkbox" v-model="dropdowns.source" value="Source 2"> Source 2</label>
+              <label><input type="checkbox" v-model="dropdowns.source" value="Source 3"> Source 3</label>
             </div>
           </div>
 
+          <!-- Dropdown pour Date de réception -->
           <div class="dropdown">
             <button class="dropbtn">
               Date de réception <span class="material-icons">event</span>
@@ -68,7 +73,7 @@
         </div>
 
         <div class="dropdowns">
-
+          <!-- Dropdown pour Trier par -->
           <div class="dropdown">
             <label for="sortBy">Trier par : </label>
             <select id="sortBy" v-model="sortBy" @change="clearSortBy">
@@ -76,11 +81,26 @@
               <option value="Recentes">Réclamations les plus récentes</option>
             </select>
           </div>
+        </div>
+
+        <div class="resultat_filtre">
 
         </div>
 
+        <div class="reinitialiser">
+          <!-- Bouton de réinitialisation des filtres -->
+          <button @click="resetDropdowns" class="reset-button">
+            <span>Réinitialiser les filtres</span>
+            <span class="material-icons">filter_alt_off</span>
+          </button>
+        </div>
+
+
+        
+
       </div>
 
+      <!-- Tableau des réclamations -->
       <table class="styled-table">
         <thead>
           <tr>
@@ -136,6 +156,12 @@ export default {
   data() {
     return {
       selectedDate: null,
+      dropdowns: {
+        statut: [], // Utilisation d'un tableau pour les checkboxes
+        societe: [],
+        domaine: [],
+        source: []
+      },
       datePickerConfig: {
         dateFormat: 'Y-m-d',
         enableTime: false,
@@ -153,23 +179,31 @@ export default {
           }
         }
       },
-      sortBy: 'Recentes' // Définir la valeur par défaut à "Recentes"
+      sortBy: 'Recentes'
     };
   },
   methods: {
     clearSortBy() {
-      if (!this.sortBy) return; // Ne rien faire si aucune option n'est sélectionnée
-      // implémenter du code ici pour gérer le tri
+      if (!this.sortBy) return;
+      // Implémenter la logique pour le tri ici
+    },
+    resetDropdowns() {
+      // Réinitialiser les valeurs des dropdowns
+      this.dropdowns.statut = [];
+      this.dropdowns.societe = [];
+      this.dropdowns.domaine = [];
+      this.dropdowns.source = [];
+      this.selectedDate = null;
+      this.sortBy = 'Recentes'; // Réinitialiser le tri par défaut
     }
   }
-}
+};
 </script>
-
 
 <style scoped>
 .page-container {
-  background-color: #f0f0f0; /* Arrière-plan gris pour la page */
-  min-height: 100vh; /* Assure que le conteneur prend toute la hauteur de la page */
+  background-color: #f0f0f0;
+  min-height: 100vh;
   padding: 0rem 2rem;
 }
 
@@ -178,33 +212,33 @@ export default {
 }
 
 .title h1 {
-  font-size: 1.5rem; 
-  font-family: 'Poppins', sans-serif; 
+  font-size: 1.5rem;
+  font-family: 'Poppins', sans-serif;
 }
 
 .blue-border {
-  border-top: 4px solid rgb(0, 147, 215); /* Bord supérieur bleu */
-  margin-top: 2rem; /* Espace au-dessus de la bordure */
+  border-top: 4px solid rgb(0, 147, 215);
+  margin-top: 2rem;
   background-color: white;
   border-radius: 5px;
-  padding: 1rem; /* Ajoute du padding à l'intérieur de la div */
+  padding: 1rem;
 }
 
 .blue-border h2 {
-  font-size: 1.15rem; 
-  font-family: 'Poppins', sans-serif; 
+  font-size: 1.15rem;
+  font-family: 'Poppins', sans-serif;
   padding: 0.5rem 1rem;
 }
 
 .recherche {
   display: flex;
-  justify-content: center; /* Centre horizontalement */
+  justify-content: center;
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
 
 .recherche input {
-  width: 40%; /* Largeur réduite */
+  width: 40%;
   padding: 0.5rem;
   font-size: 1rem;
   font-family: 'Poppins', sans-serif;
@@ -219,24 +253,16 @@ export default {
   margin-bottom: 1rem;
 }
 
-
 .filtre_title {
   display: flex;
-  align-items: center; /* Centre verticalement */
-  gap: 0.5rem; /* Espace entre le texte et l'icône */
+  align-items: center;
+  gap: 0.5rem;
 }
-
-.filtre_title .text{
-  font-size: 1.2rem;
-}
-
-
 
 .dropdowns {
   display: flex;
-  gap: 1rem; /* Espace entre les filtres */
+  gap: 1rem;
   padding: 1rem 0rem;
-  
 }
 
 .dropdown {
@@ -254,8 +280,8 @@ export default {
   cursor: pointer;
   min-width: 15rem;
   display: flex;
-  align-items: center; /* Aligner le texte et l'icône */
-  justify-content: space-between; /* Espace entre le texte et l'icône */
+  align-items: center;
+  justify-content: space-between;
 }
 
 .dropbtn .material-icons {
@@ -263,13 +289,12 @@ export default {
 }
 
 #sortBy {
-  padding: 0.58rem; /* Ajustement du padding pour les options */
+  padding: 0.58rem;
   border: 1px solid #ccc;
   border-radius: none;
   font-size: 1.2rem;
   min-width: 15rem;
 }
-
 
 .dropdown-content {
   display: none;
@@ -293,6 +318,28 @@ export default {
   display: block;
 }
 
+.reinitialiser .reset-button {
+  display: flex;
+  align-items: center;
+  background-color: grey;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  color: white;
+  margin: 1rem 0rem;
+  transition: background-color 0.3s ease-in-out; /* Transition pour le fond */
+
+}
+
+.reinitialiser .reset-button:hover {
+  background-color: rgb(160, 160, 160);
+}
+
+.reinitialiser .reset-button span {
+  margin-right: 8px; 
+  font-size: 1rem;
+  border-radius: 4px;
+}
+
 .styled-table {
   width: 100%;
   border-collapse: collapse;
@@ -302,24 +349,24 @@ export default {
 }
 
 .styled-table thead tr {
-  background-color: #ffffff; /* En-tête blanche */
+  background-color: #ffffff;
   text-align: left;
 }
 
 .styled-table th {
-  font-weight: bold; /* Texte en gras pour les en-têtes */
+  font-weight: bold;
   padding: 0.625rem;
-  border: 1px solid #ddd; /* Bordure grise claire */
+  border: 1px solid #ddd;
   font-size: 1rem;
 }
 
 .styled-table td {
   padding: 0.625rem;
-  border: 1px solid #ddd; /* Bordure grise claire */
+  border: 1px solid #ddd;
 }
 
 .styled-table tbody tr:nth-child(even) {
-  background-color: #ffffff; 
+  background-color: #ffffff;
 }
 
 .styled-table tbody tr:nth-child(odd) {

@@ -61,16 +61,16 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 
 aside {
-    margin-top: 3.6rem;
     flex-direction: column;
     background-color: var(--dark);
     color: var(--light);
     width: calc(2rem + 32px);
     overflow: hidden;
-    min-height: 100vh;
+    height: 100%;
     padding: 1rem;
     transition: 0.2s ease-in-out;
     user-select: none;
+    
 
     .logo {
         margin-bottom: 1rem;

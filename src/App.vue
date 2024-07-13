@@ -63,16 +63,17 @@ button {
 .app {
     display: flex;
     flex-direction: column;
-    height: 100vh; /* Assure que l'application occupe toute la hauteur de la fenêtre */
+    height: 100vh;
 
     .content {
         display: flex;
         flex: 1; /* Permet au contenu principal de prendre tout l'espace restant */
+        margin-top: 3.6rem;
+
     }
 
     main {
         flex: 1; /* Contenu principal s'étend pour remplir l'espace restant */
-        padding-top: 3.6rem;
 
         @media (max-width: 1024px) {
             padding-left: 4rem;
