@@ -152,7 +152,6 @@
 <script>
 import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
-
 export default {
   name: 'Liste_Reclamations_Page',
   components: {
