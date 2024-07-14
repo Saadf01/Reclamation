@@ -1,11 +1,16 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import Accueil from '@/pages/Accueil_Page.vue'
 import CreerReclamation from '@/pages/Creer_Reclamation_Page.vue'
 import ListeReclamations from '@/pages/Liste_Reclamations_Page.vue'
 import VisualiserReclamation from '@/pages/Visualiser_Reclamation_Page.vue'
 
 
 const routes = [
-   
+    {
+        path: '/',
+        name: 'Accueil',
+        component: Accueil
+    },
     {
         path: '/CreerReclamation',
         name: 'CreerReclamation',

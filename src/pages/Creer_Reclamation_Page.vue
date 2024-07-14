@@ -1,6 +1,18 @@
 <template>
- <form_creation_reclamation />
+  <div class="page_container">
+    <div class="title">
+      <h1>Créer une réclamation</h1>
+    </div>
+
+    <div class="saisi_form">
+      <form_creation_reclamation />  
+    </div>
+    
+  </div>
+
 </template>
+
+
 <script>
 import form_creation_reclamation from "../components/form_creation_reclamation.vue"
 export default {
@@ -21,11 +33,13 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+
 .page_container {
   background-color: #f0f0f0;
   min-height: 100vh;
   padding: 0rem 2rem;
+  margin-bottom: 2rem;
 }
 
 .title {
@@ -37,90 +51,10 @@ export default {
   font-family: 'Poppins', sans-serif;
 }
 
-.blue-borders {
-  max-width: 900px;
-  width: 100%;
-  border-top: 4px solid rgb(0, 147, 215);
-  margin-top: 2rem;
-  background-color: white;
-  border-radius: 5px;
-  padding: 1rem;
-}
-
-.blue-borders h2 {
-  font-size: 1.15rem;
-  font-family: 'Poppins', sans-serif;
-  padding: 0.5rem 1rem;
-}
-
-.rec-detail {
-  margin-top: 30px;
+.saisi_form {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
 }
 
-.input-box {
-  width: calc(50% - 10px);
-  margin-bottom: 1rem;
-}
 
-.input-box label,
-.input-box input,
-.input-box select {
-  display: block;
-  width: 100%;
-  margin-bottom: 0.5rem;
-}
-
-.input-box input,
-.input-box select {
-  height: 45px;
-  padding: 0.5rem;
-  font-size: 1rem;
-  font-family: 'Poppins', sans-serif;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.gender {
-  width: calc(50% - 10px);
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-}
-
-.gender label {
-  font-weight: 500;
-  margin-right: 10px;
-  cursor: pointer;
-}
-
-form :where(.gender label, .gender input) {
-  cursor: pointer;
-}
-
-.titlgender {
-  font-size: 17px;
-  font-weight: 500;
-}
-
-.button {
-  margin-top: 1rem;
-  text-align: right;
-}
-
-input[type="radio"] {
-  margin-right: 6px;
-}
-
-input[type="date"],
-select {
-  cursor: pointer;
-}
-.button input[type="submit"] {
-    padding: 10px 20px;
-    font-size: 1rem;
-    cursor: pointer;
-  }
 </style>

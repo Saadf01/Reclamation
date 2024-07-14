@@ -1,8 +1,6 @@
 <template>
     <div class="page_container">
-    <div class="title">
-      <h1>Créer une réclamation</h1>
-    </div>
+
     <form action="your_form_submission_url_here">
       <!-- Section Information réclamant -->
       <div class="blue-borders">
@@ -145,6 +143,7 @@
       <div class="button">
         <input type="submit" value="Enregistrer">
       </div>
+
     </form>
   </div>
 </template>
@@ -153,3 +152,107 @@ export default{
     name : "form_creation_reclamation"
 }
 </script>
+
+<style lang="scss" scoped>
+
+
+.blue-borders {
+  max-width: 900px;
+  width: 100%;
+  border-top: 4px solid rgb(0, 147, 215);
+  margin-top: 2rem;
+  background-color: white;
+  border-radius: 5px;
+  padding: 1rem;
+}
+
+.blue-borders h2 {
+  font-size: 1.15rem;
+  font-family: 'Poppins', sans-serif;
+  padding: 0.5rem 1rem;
+}
+
+.rec-detail {
+  margin-top: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.input-box {
+  width: calc(50% - 10px);
+  margin-bottom: 1rem;
+}
+
+.input-box label,
+.input-box input,
+.input-box select {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.input-box input,
+.input-box select {
+  height: 45px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.gender {
+  width: calc(50% - 10px);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.gender label {
+  font-weight: 500;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+form :where(.gender label, .gender input) {
+  cursor: pointer;
+}
+
+.titlgender {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.button {
+  margin: 4rem 0rem;
+  text-align: center;
+}
+
+
+input[type="radio"] {
+  margin-right: 6px;
+}
+
+input[type="date"],
+select {
+  cursor: pointer;
+}
+
+.button input[type="submit"] {
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: var(--dark);
+    border-radius: 4px;
+    border: none;
+    color: white;
+    transition: 0.2s ease-in-out;
+  }
+
+.button input[type="submit"]:hover {
+  color: var(--primary);
+  background-color: var(--dark-alt);
+}
+
+</style>
