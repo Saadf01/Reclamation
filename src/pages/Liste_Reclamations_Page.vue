@@ -8,7 +8,12 @@
       <h2>Rechercher une réclamation</h2>
 
       <div class="recherche">
-        <input type="text" placeholder="Rechercher une réclamation..." />
+        <div class="input-container">
+          <input type="text" placeholder="Rechercher une réclamation..." />
+          <button class="search-button">
+            <span class="material-icons">search</span>
+          </button>
+        </div>
       </div>
 
       <div class="filtre">
@@ -147,7 +152,6 @@
 <script>
 import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
-
 export default {
   name: 'Liste_Reclamations_Page',
   components: {
@@ -237,14 +241,45 @@ export default {
   margin-bottom: 1rem;
 }
 
-.recherche input {
+.input-container {
+  display: flex;
   width: 40%;
+}
+
+.input-container input {
+  width: 100%;
   padding: 0.5rem;
   font-size: 1rem;
+  font-style: italic;
   font-family: 'Poppins', sans-serif;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 4px 0 0 4px;
 }
+
+.input-container .search-button {
+  background-color: #ccc;
+  border: none;
+  padding: 0.7rem;
+  cursor: pointer;
+  border-radius: 0 4px 4px 0;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.input-container .search-button .material-icons {
+  font-size: 1.3rem;
+}
+
+.input-container .search-button:hover {
+  background-color: #bbb; /* Couleur de fond au survol */
+  color: white;
+}
+
+.input-container .search-button:active {
+  background-color: #aaa; /* Couleur de fond lorsque le bouton est enfoncé */
+}
+
 
 .filtre {
   display: flex;
@@ -294,6 +329,7 @@ export default {
   border-radius: none;
   font-size: 1.2rem;
   min-width: 15rem;
+  cursor: pointer;
 }
 
 .dropdown-content {
@@ -321,17 +357,22 @@ export default {
 .reinitialiser .reset-button {
   display: flex;
   align-items: center;
-  background-color: grey;
+  background-color: #ccc;
   padding: 0.6rem 1rem;
   border-radius: 4px;
-  color: white;
+  color: black;
   margin: 1rem 0rem;
-  transition: background-color 0.3s ease-in-out; /* Transition pour le fond */
+  transition: background-color 0.2s ease-in-out; /* Transition pour le fond */
 
 }
 
 .reinitialiser .reset-button:hover {
-  background-color: rgb(160, 160, 160);
+  background-color: #bbb;
+  color: white;
+}
+
+.reinitialiser .reset-button:active {
+  background-color: #aaa;
 }
 
 .reinitialiser .reset-button span {

@@ -6,7 +6,7 @@
         <!-- Contenu principal avec Sidebar et router-view -->
         <div class="content">
             <!-- Sidebar -->
-            <Sidebar />
+            <Sidebar id="sidebar"/>
 
             <!-- Contenu principal avec router-view -->
             <main>
@@ -74,7 +74,7 @@ button {
 
     main {
         flex: 1; /* Contenu principal s'étend pour remplir l'espace restant */
-
+        
         @media (max-width: 1024px) {
             padding-left: 4rem;
         }
