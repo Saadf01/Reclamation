@@ -29,7 +29,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in sortedReclamations" :key="index">
+          <tr v-for="(item, index) in filteredReclamations" :key="index">
             <td>{{ item.reference }}</td>
             <td>{{ item.objet }}</td>
             <td>{{ item.responsable }}</td>
@@ -45,7 +45,7 @@
     </div>
 
     <!-- Composant Filtre -->
-    <FiltreSidebar :isVisible="isFilterSidebarVisible" @toggle-sidebar="toggleFilterSidebar" />
+    <FiltreSidebar :isVisible="isFilterSidebarVisible" @toggle-sidebar="toggleFilterSidebar" @reset-filters="resetFilters" @apply-filters="applyFilters" />
   </div>
 </template>
 
@@ -62,16 +62,31 @@ export default {
       sortBy: 'reference',
       sortDirection: 'asc',
       isFilterSidebarVisible: false,
+      filters: {
+        societe: [],
+        domaine: [],
+        source: [],
+        support: [],
+        date_reception: ''
+      },
       reclamations: [
-        { reference: 'Data 1', objet: 'Data 2', responsable: 'Data 3', societe: 'Data 4', domaine: 'Data 5', source: 'Data 6', date_reception: '2023-01-01', statut: 'Data 8' },
-        { reference: 'Data 10', objet: 'Data 11', responsable: 'Data 12', societe: 'Data 13', domaine: 'Data 14', source: 'Data 15', date_reception: '2023-02-01', statut: 'Data 17' }
+        { reference: 'Data 1', objet: 'Data 2', responsable: 'Data 3', societe: 'Societe 1', domaine: 'Domaine 1', source: 'Source 1', date_reception: '2023-01-01', statut: 'Data 8' },
+        { reference: 'Data 10', objet: 'Data 11', responsable: 'Data 12', societe: 'Societe 2', domaine: 'Domaine 2', source: 'Source 2', date_reception: '2023-02-01', statut: 'Data 17' }
       ]
     };
   },
   computed: {
-    sortedReclamations() {
-      return this.reclamations.slice().sort((a, b) => {
-        const modifier = this.sortDirection === 'asc' ? 1 : -1;
+    filteredReclamations() {
+      return this.reclamations.filter(item => {
+        return (
+          (this.filters.societe.length === 0 || this.filters.societe.includes(item.societe)) &&
+          (this.filters.domaine.length === 0 || this.filters.domaine.includes(item.domaine)) &&
+          (this.filters.source.length === 0 || this.filters.source.includes(item.source)) &&
+          (this.filters.support.length === 0 || this.filters.support.includes(item.support)) &&
+          (!this.filters.date_reception || item.date_reception === this.filters.date_reception)
+        );
+      }).sort((a, b) => {
+        let modifier = this.sortDirection === 'asc' ? 1 : -1;
         if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
         if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
         return 0;
@@ -79,11 +94,14 @@ export default {
     }
   },
   methods: {
-    sortTable(column) {
-      if (this.sortBy === column) {
+    toggleFilterSidebar() {
+      this.isFilterSidebarVisible = !this.isFilterSidebarVisible;
+    },
+    sortTable(key) {
+      if (this.sortBy === key) {
         this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
       } else {
-        this.sortBy = column;
+        this.sortBy = key;
         this.sortDirection = 'asc';
       }
     },
@@ -91,18 +109,31 @@ export default {
       if (this.sortBy !== column) return 'unfold_more';
       return this.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';
     },
-    toggleFilterSidebar() {
-      this.isFilterSidebarVisible = !this.isFilterSidebarVisible;
+    resetFilters() {
+      this.filters = {
+        societe: [],
+        domaine: [],
+        source: [],
+        support: [],
+        date_reception: ''
+      };
+    },
+    applyFilters(filters) {
+      this.filters = filters;
     }
   }
 };
 </script>
+
+
 
 <style scoped>
 .page-container {
   background-color: #f0f0f0;
   min-height: 100vh;
   padding: 0rem 2rem;
+  overflow-y: auto;
+  z-index: 1101;
 }
 
 .title {
@@ -185,4 +216,8 @@ export default {
   transition: 0.2s ease-in-out;
 }
 
+.page-container.sidebar-open {
+  position: fixed;
+  width: 94.5%;
+}
 </style>
