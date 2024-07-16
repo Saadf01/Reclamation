@@ -1,5 +1,5 @@
 <template>
-  <div class="page-container">
+  <div :class="['page-container', { 'sidebar-open': isFilterSidebarVisible }]">
     <div class="title">
       <h1>Liste des réclamations</h1>
     </div>
@@ -7,198 +7,92 @@
     <div class="blue-border">
       <h2>Rechercher une réclamation</h2>
 
-      <div class="recherche">
-        <div class="input-container">
-          <input type="text" placeholder="Rechercher une réclamation..." />
-          <button class="search-button">
-            <span class="material-icons">search</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="filtre">
-        <div class="filtre_title">
-          <span class="text">Filtre</span>
-          <span class="material-icons">tune</span>
-        </div>
-        
-        <div class="dropdowns">
-          <!-- Dropdown pour Statut -->
-          <div class="dropdown">
-            <button class="dropbtn">Statut</button>
-            <div class="dropdown-content">
-              <label><input type="checkbox" v-model="dropdowns.statut" value="Statut 1"> Statut 1</label>
-              <label><input type="checkbox" v-model="dropdowns.statut" value="Statut 2"> Statut 2</label>
-              <label><input type="checkbox" v-model="dropdowns.statut" value="Statut 3"> Statut 3</label>
-            </div>
-          </div>
-
-          <!-- Dropdown pour Société -->
-          <div class="dropdown">
-            <button class="dropbtn">Société</button>
-            <div class="dropdown-content">
-              <label><input type="checkbox" v-model="dropdowns.societe" value="Société 1"> Société 1</label>
-              <label><input type="checkbox" v-model="dropdowns.societe" value="Société 2"> Société 2</label>
-              <label><input type="checkbox" v-model="dropdowns.societe" value="Société 3"> Société 3</label>
-            </div>
-          </div>
-
-          <!-- Dropdown pour Domaine -->
-          <div class="dropdown">
-            <button class="dropbtn">Domaine</button>
-            <div class="dropdown-content">
-              <label><input type="checkbox" v-model="dropdowns.domaine" value="Domaine 1"> Domaine 1</label>
-              <label><input type="checkbox" v-model="dropdowns.domaine" value="Domaine 2"> Domaine 2</label>
-              <label><input type="checkbox" v-model="dropdowns.domaine" value="Domaine 3"> Domaine 3</label>
-            </div>
-          </div>
-
-          <!-- Dropdown pour Source -->
-          <div class="dropdown">
-            <button class="dropbtn">Source</button>
-            <div class="dropdown-content">
-              <label><input type="checkbox" v-model="dropdowns.source" value="Source 1"> Source 1</label>
-              <label><input type="checkbox" v-model="dropdowns.source" value="Source 2"> Source 2</label>
-              <label><input type="checkbox" v-model="dropdowns.source" value="Source 3"> Source 3</label>
-            </div>
-          </div>
-
-          <!-- Dropdown pour Date de réception -->
-          <div class="dropdown">
-            <button class="dropbtn">
-              Date de réception <span class="material-icons">event</span>
-            </button>
-            <div class="dropdown-content">
-              <flat-pickr v-model="selectedDate" :config="datePickerConfig"></flat-pickr>
-            </div>
-          </div>
-
-          
-
-        </div>
-
-        <div class="dropdowns">
-          <!-- Dropdown pour Trier par -->
-          <div class="dropdown">
-            <label for="sortBy">Trier par : </label>
-            <select id="sortBy" v-model="sortBy" @change="clearSortBy">
-              <option value="Anciennes">Réclamations les plus anciennes</option>
-              <option value="Recentes">Réclamations les plus récentes</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="resultat_filtre">
-
-        </div>
-
-        <div class="reinitialiser">
-          <!-- Bouton de réinitialisation des filtres -->
-          <button @click="resetDropdowns" class="reset-button">
-            <span>Réinitialiser les filtres</span>
-            <span class="material-icons">filter_alt_off</span>
-          </button>
-        </div>
-
-
-        
-
-      </div>
+      <!-- Bouton pour ouvrir les filtres -->
+      <button @click="toggleFilterSidebar" class="filter-button">
+        <span class="material-icons">tune</span>
+        Filtres
+      </button>
 
       <!-- Tableau des réclamations -->
       <table class="styled-table">
         <thead>
           <tr>
-            <th>Référence</th>
-            <th>Objet</th>
-            <th>Responsable</th>
-            <th>Société</th>
-            <th>Domaine</th>
-            <th>Source</th>
-            <th>Date de réception</th>
-            <th>Statut</th>
+            <th @click="sortTable('reference')">Référence <span class="material-icons">{{ getSortIcon('reference') }}</span></th>
+            <th @click="sortTable('objet')">Objet <span class="material-icons">{{ getSortIcon('objet') }}</span></th>
+            <th @click="sortTable('responsable')">Responsable <span class="material-icons">{{ getSortIcon('responsable') }}</span></th>
+            <th @click="sortTable('societe')">Société <span class="material-icons">{{ getSortIcon('societe') }}</span></th>
+            <th @click="sortTable('domaine')">Domaine <span class="material-icons">{{ getSortIcon('domaine') }}</span></th>
+            <th @click="sortTable('source')">Source <span class="material-icons">{{ getSortIcon('source') }}</span></th>
+            <th @click="sortTable('date_reception')">Date de réception <span class="material-icons">{{ getSortIcon('date_reception') }}</span></th>
+            <th @click="sortTable('statut')">Statut <span class="material-icons">{{ getSortIcon('statut') }}</span></th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Data 1</td>
-            <td>Data 2</td>
-            <td>Data 3</td>
-            <td>Data 4</td>
-            <td>Data 5</td>
-            <td>Data 6</td>
-            <td>Data 7</td>
-            <td>Data 8</td>
-            <td>Data 9</td>
-          </tr>
-          <tr>
-            <td>Data 10</td>
-            <td>Data 11</td>
-            <td>Data 12</td>
-            <td>Data 13</td>
-            <td>Data 14</td>
-            <td>Data 15</td>
-            <td>Data 16</td>
-            <td>Data 17</td>
-            <td>Data 18</td>
+          <tr v-for="(item, index) in sortedReclamations" :key="index">
+            <td>{{ item.reference }}</td>
+            <td>{{ item.objet }}</td>
+            <td>{{ item.responsable }}</td>
+            <td>{{ item.societe }}</td>
+            <td>{{ item.domaine }}</td>
+            <td>{{ item.source }}</td>
+            <td>{{ item.date_reception }}</td>
+            <td>{{ item.statut }}</td>
+            <td>Action</td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <!-- Composant Filtre -->
+    <FiltreSidebar :isVisible="isFilterSidebarVisible" @toggle-sidebar="toggleFilterSidebar" />
   </div>
 </template>
 
 <script>
-import flatPickr from 'vue-flatpickr-component';
-import 'flatpickr/dist/flatpickr.css';
+import FiltreSidebar from '@/components/Filtre_Sidebar.vue';
+
 export default {
   name: 'Liste_Reclamations_Page',
   components: {
-    flatPickr
+    FiltreSidebar
   },
   data() {
     return {
-      selectedDate: null,
-      dropdowns: {
-        statut: [], // Utilisation d'un tableau pour les checkboxes
-        societe: [],
-        domaine: [],
-        source: []
-      },
-      datePickerConfig: {
-        dateFormat: 'Y-m-d',
-        enableTime: false,
-        altInput: true,
-        altFormat: 'F j, Y',
-        locale: {
-          firstDayOfWeek: 1,
-          weekdays: {
-            shorthand: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
-            longhand: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
-          },
-          months: {
-            shorthand: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
-            longhand: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
-          }
-        }
-      },
-      sortBy: 'Recentes'
+      sortBy: 'reference',
+      sortDirection: 'asc',
+      isFilterSidebarVisible: false,
+      reclamations: [
+        { reference: 'Data 1', objet: 'Data 2', responsable: 'Data 3', societe: 'Data 4', domaine: 'Data 5', source: 'Data 6', date_reception: '2023-01-01', statut: 'Data 8' },
+        { reference: 'Data 10', objet: 'Data 11', responsable: 'Data 12', societe: 'Data 13', domaine: 'Data 14', source: 'Data 15', date_reception: '2023-02-01', statut: 'Data 17' }
+      ]
     };
   },
+  computed: {
+    sortedReclamations() {
+      return this.reclamations.slice().sort((a, b) => {
+        const modifier = this.sortDirection === 'asc' ? 1 : -1;
+        if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
+        if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
+        return 0;
+      });
+    }
+  },
   methods: {
-    clearSortBy() {
-      if (!this.sortBy) return;
-      // Implémenter la logique pour le tri ici
+    sortTable(column) {
+      if (this.sortBy === column) {
+        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortBy = column;
+        this.sortDirection = 'asc';
+      }
     },
-    resetDropdowns() {
-      // Réinitialiser les valeurs des dropdowns
-      this.dropdowns.statut = [];
-      this.dropdowns.societe = [];
-      this.dropdowns.domaine = [];
-      this.dropdowns.source = [];
-      this.selectedDate = null;
-      this.sortBy = 'Recentes'; // Réinitialiser le tri par défaut
+    getSortIcon(column) {
+      if (this.sortBy !== column) return 'unfold_more';
+      return this.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';
+    },
+    toggleFilterSidebar() {
+      this.isFilterSidebarVisible = !this.isFilterSidebarVisible;
     }
   }
 };
@@ -234,153 +128,6 @@ export default {
   padding: 0.5rem 1rem;
 }
 
-.recherche {
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-.input-container {
-  display: flex;
-  width: 40%;
-}
-
-.input-container input {
-  width: 100%;
-  padding: 0.5rem;
-  font-size: 1rem;
-  font-style: italic;
-  font-family: 'Poppins', sans-serif;
-  border: 1px solid #ccc;
-  border-radius: 4px 0 0 4px;
-}
-
-.input-container .search-button {
-  background-color: #ccc;
-  border: none;
-  padding: 0.7rem;
-  cursor: pointer;
-  border-radius: 0 4px 4px 0;
-  display: flex;
-  align-items: center;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.input-container .search-button .material-icons {
-  font-size: 1.3rem;
-}
-
-.input-container .search-button:hover {
-  background-color: #bbb; /* Couleur de fond au survol */
-  color: white;
-}
-
-.input-container .search-button:active {
-  background-color: #aaa; /* Couleur de fond lorsque le bouton est enfoncé */
-}
-
-
-.filtre {
-  display: flex;
-  flex-direction: column;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-.filtre_title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.dropdowns {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem 0rem;
-}
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-
-.dropbtn {
-  background-color: #ffffff;
-  border: 1px solid #ccc;
-  padding: 0.5rem;
-  font-family: 'Poppins', sans-serif;
-  font-size: 1rem;
-  cursor: pointer;
-  min-width: 15rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.dropbtn .material-icons {
-  font-size: 1.2rem;
-}
-
-#sortBy {
-  padding: 0.58rem;
-  border: 1px solid #ccc;
-  border-radius: none;
-  font-size: 1.2rem;
-  min-width: 15rem;
-  cursor: pointer;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #ffffff;
-  min-width: 15rem;
-  padding: 12px 16px;
-  z-index: 1;
-  border: 1px solid #ccc;
-  border-top: none;
-}
-
-.dropdown-content label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.reinitialiser .reset-button {
-  display: flex;
-  align-items: center;
-  background-color: #ccc;
-  padding: 0.6rem 1rem;
-  border-radius: 4px;
-  color: black;
-  margin: 1rem 0rem;
-  transition: background-color 0.2s ease-in-out; /* Transition pour le fond */
-
-}
-
-.reinitialiser .reset-button:hover {
-  background-color: #bbb;
-  color: white;
-}
-
-.reinitialiser .reset-button:active {
-  background-color: #aaa;
-}
-
-.reinitialiser .reset-button span {
-  margin-right: 8px; 
-  font-size: 1rem;
-  border-radius: 4px;
-}
-
 .styled-table {
   width: 100%;
   border-collapse: collapse;
@@ -392,6 +139,7 @@ export default {
 .styled-table thead tr {
   background-color: #ffffff;
   text-align: left;
+  user-select: none;
 }
 
 .styled-table th {
@@ -399,6 +147,12 @@ export default {
   padding: 0.625rem;
   border: 1px solid #ddd;
   font-size: 1rem;
+  cursor: pointer;
+}
+
+.styled-table th .material-icons {
+  vertical-align: middle;
+  font-size: 16px;
 }
 
 .styled-table td {
@@ -406,15 +160,29 @@ export default {
   border: 1px solid #ddd;
 }
 
-.styled-table tbody tr:nth-child(even) {
-  background-color: #ffffff;
-}
-
-.styled-table tbody tr:nth-child(odd) {
-  background-color: #f3f3f3;
-}
-
 .styled-table tbody tr:hover {
   background-color: #f1f1f1;
 }
+
+.filter-button {
+  color: black;
+  border: 1px solid;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+  font-size: 16px;
+  display: flex;
+  gap: 0.7rem;
+  border-radius: 10px;
+  border-color: rgb(195, 195, 195);
+  transition: 0.2s ease-in-out;
+}
+
+.filter-button:hover {
+  background-color: #e8e8e8;
+  transition: 0.2s ease-in-out;
+}
+
 </style>
