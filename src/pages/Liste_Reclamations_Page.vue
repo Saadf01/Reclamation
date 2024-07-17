@@ -17,26 +17,36 @@
       <table class="styled-table">
         <thead>
           <tr>
-            <th @click="sortTable('reference')">Référence <span class="material-icons">{{ getSortIcon('reference') }}</span></th>
-            <th @click="sortTable('objet')">Objet <span class="material-icons">{{ getSortIcon('objet') }}</span></th>
-            <th @click="sortTable('responsable')">Responsable <span class="material-icons">{{ getSortIcon('responsable') }}</span></th>
+            <th @click="sortTable('id_reclamation')">ID Réclamation <span class="material-icons">{{ getSortIcon('id_reclamation') }}</span></th>
             <th @click="sortTable('societe')">Société <span class="material-icons">{{ getSortIcon('societe') }}</span></th>
+            <th @click="sortTable('responsable')">Responsable <span class="material-icons">{{ getSortIcon('responsable') }}</span></th>
+            <th @click="sortTable('reclamant')">Réclamant <span class="material-icons">{{ getSortIcon('reclamant') }}</span></th>
+            <th @click="sortTable('objet')">Objet <span class="material-icons">{{ getSortIcon('objet') }}</span></th>
             <th @click="sortTable('domaine')">Domaine <span class="material-icons">{{ getSortIcon('domaine') }}</span></th>
+            <th @click="sortTable('reception_bo')">Réception BO <span class="material-icons">{{ getSortIcon('reception_bo') }}</span></th>
             <th @click="sortTable('source')">Source <span class="material-icons">{{ getSortIcon('source') }}</span></th>
+            <th @click="sortTable('operation')">Opération <span class="material-icons">{{ getSortIcon('operation') }}</span></th>
+            <th @click="sortTable('support')">Support <span class="material-icons">{{ getSortIcon('support') }}</span></th>
             <th @click="sortTable('date_reception')">Date de réception <span class="material-icons">{{ getSortIcon('date_reception') }}</span></th>
+            <th @click="sortTable('date_declaration')">Date de déclaration <span class="material-icons">{{ getSortIcon('date_declaration') }}</span></th>
             <th @click="sortTable('statut')">Statut <span class="material-icons">{{ getSortIcon('statut') }}</span></th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(item, index) in filteredReclamations" :key="index">
-            <td>{{ item.reference }}</td>
-            <td>{{ item.objet }}</td>
-            <td>{{ item.responsable }}</td>
+            <td>{{ item.id_reclamation }}</td>
             <td>{{ item.societe }}</td>
+            <td>{{ item.responsable }}</td>
+            <td>{{ item.reclamant }}</td>
+            <td>{{ item.objet }}</td>
             <td>{{ item.domaine }}</td>
+            <td>{{ item.reception_bo }}</td>
             <td>{{ item.source }}</td>
+            <td>{{ item.operation }}</td>
+            <td>{{ item.support }}</td>
             <td>{{ item.date_reception }}</td>
+            <td>{{ item.date_declaration }}</td>
             <td>{{ item.statut }}</td>
             <td>Action</td>
           </tr>
@@ -59,7 +69,7 @@ export default {
   },
   data() {
     return {
-      sortBy: 'reference',
+      sortBy: 'id_reclamation',
       sortDirection: 'asc',
       isFilterSidebarVisible: false,
       filters: {
@@ -67,11 +77,14 @@ export default {
         domaine: [],
         source: [],
         support: [],
+        statut: [],
+        reception_bo: [],
+        date_declaration: '',
         date_reception: ''
       },
       reclamations: [
-        { reference: 'Data 1', objet: 'Data 2', responsable: 'Data 3', societe: 'Societe 1', domaine: 'Domaine 1', source: 'Source 1', date_reception: '2023-01-01', statut: 'Data 8' },
-        { reference: 'Data 10', objet: 'Data 11', responsable: 'Data 12', societe: 'Societe 2', domaine: 'Domaine 2', source: 'Source 2', date_reception: '2023-02-01', statut: 'Data 17' }
+        { id_reclamation: '1', societe: 'Al Omrane Casablanca - Settat', responsable: 'Responsable 1', reclamant: 'Reclamant 1', objet: 'Objet 1', domaine: 'Autre', source: 'Réclamant', operation: 'ANNASSIM', reception_bo: 'SAO', support: 'Courrier', date_reception: '2023-01-01', date_declaration: '2023-01-02', statut: 'En cours de traitement' },
+        { id_reclamation: '2', societe: 'Al Omrane Fès Meknès', responsable: 'Responsable 2', reclamant: 'Reclamant 2', objet: 'Objet 2', domaine: 'Accueil - Renseignements', source: 'Administration', operation: 'ANNASSIM', reception_bo: 'HAO', support: 'Site Web', date_reception: '2023-02-01', date_declaration: '2023-02-02', statut: 'Cloturée' }
       ]
     };
   },
@@ -83,6 +96,9 @@ export default {
           (this.filters.domaine.length === 0 || this.filters.domaine.includes(item.domaine)) &&
           (this.filters.source.length === 0 || this.filters.source.includes(item.source)) &&
           (this.filters.support.length === 0 || this.filters.support.includes(item.support)) &&
+          (this.filters.statut.length === 0 || this.filters.statut.includes(item.statut)) &&
+          (this.filters.reception_bo.length === 0 || this.filters.reception_bo.includes(item.reception_bo)) &&
+          (this.filters.date_declaration.length === 0 || this.filters.date_declaration.includes(item.date_declaration)) &&
           (!this.filters.date_reception || item.date_reception === this.filters.date_reception)
         );
       }).sort((a, b) => {
@@ -115,6 +131,9 @@ export default {
         domaine: [],
         source: [],
         support: [],
+        statut: [],
+        reception_bo: [],
+        date_declaration: '',
         date_reception: ''
       };
     },
@@ -124,7 +143,6 @@ export default {
   }
 };
 </script>
-
 
 
 <style scoped>
@@ -180,6 +198,7 @@ export default {
   font-size: 1rem;
   cursor: pointer;
 }
+
 
 .styled-table th .material-icons {
   vertical-align: middle;
