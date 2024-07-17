@@ -105,10 +105,6 @@ form :where(.gender label, .gender input) {
   font-weight: 500;
 }
 
-.button {
-  margin-top: 1rem;
-  text-align: right;
-}
 
 input[type="radio"] {
   margin-right: 6px;
@@ -118,9 +114,175 @@ input[type="date"],
 select {
   cursor: pointer;
 }
-.button input[type="submit"] {
-    padding: 10px 20px;
-    font-size: 1rem;
-    cursor: pointer;
-  }
+.button-submit {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.button-submit:hover {
+  background-color: #2980b9;
+}
+.button-container {
+  margin-top: 2rem;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between; /* Alignement des boutons sur la même ligne */
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  width: 50%;
+  max-width: 600px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative; 
+}
+
+.modal-content h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.modal-content ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.modal-content ul li {
+  display: flex;
+  justify-content: space-between; /* Pour séparer les colonnes */
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-content ul li:hover {
+  background-color: #f0f0f0;
+}
+
+.modal-item-cin,
+.modal-item-name {
+  width: 50%; /* Diviser l'espace en deux colonnes égales */
+}
+
+.modal-content button {
+  padding: 10px 20px;
+  background-color: rgb(0, 147, 215);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.modal-content button:hover {
+  background-color: rgb(0, 117, 175);
+}
+
+.modal-input {
+  margin-bottom: 10px;
+  padding: 0.5rem;
+  width: 100%;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.modal-item {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-item:hover {
+  background-color: #f0f0f0;
+}
+
+.modal-button {
+  padding: 10px 20px;
+  background-color: rgb(0, 147, 215);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.modal-button:hover {
+  background-color: rgb(0, 117, 175);
+}
+  
+.modal-button-new {
+  position: absolute;
+  bottom: 20px;
+  right: 20px; /* Positionné à droite à l'intérieur de .modal-content */
+  padding: 10px 20px;
+  background-color: rgb(0, 147, 215);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-button-new:hover {
+  background-color: rgb(0, 117, 175);
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon input {
+  padding-right: 30px; /* Ajustez l'espacement pour l'icône */
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px; /* Ajustez l'espacement à droite */
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.search-icon i {
+  color: #888;
+}
+
+.search-icon:hover i {
+  color: #333;
+}
 </style>
