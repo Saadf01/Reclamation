@@ -13,6 +13,10 @@
         Filtres
       </button>
 
+      <!-- Barre de recherche -->
+      <input v-model="searchQuery" type="text" placeholder="Rechercher..." class="search-bar">
+
+
       <!-- Tableau des réclamations -->
       <table class="styled-table">
         <thead>
@@ -47,8 +51,29 @@
             <td>{{ item.support }}</td>
             <td>{{ item.date_reception }}</td>
             <td>{{ item.date_declaration }}</td>
-            <td>{{ item.statut }}</td>
-            <td>Action</td>
+            <td><div :class="['statut', getStatusClass(item.statut)]"><span>{{ item.statut }}</span></div></td>
+            <td>
+              <div class="action-menu" @mouseleave="closeDropdown">
+                <button class="action-menu-button" @click="toggleDropdown">
+                  <span class="action">Action</span>
+                  <span class="material-icons">arrow_drop_down</span>
+                </button>
+                <ul v-if="dropdownOpen" class="dropdown">
+                  <!-- Option pour visualiser -->
+                  <li>
+                    <router-link :to="`/VisualiserReclamation`" class="button">
+                      <span class="text">Visualiser</span>
+                    </router-link>
+                  </li>
+                  <!-- Option pour modifier -->
+                  <li>
+                    <router-link :to="`/`" class="button">
+                      <span class="text">Modifier</span>
+                    </router-link>
+                  </li>
+                </ul>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -62,6 +87,7 @@
 <script>
 import FiltreSidebar from '@/components/Filtre_Sidebar.vue';
 
+
 export default {
   name: 'Liste_Reclamations_Page',
   components: {
@@ -72,6 +98,8 @@ export default {
       sortBy: 'id_reclamation',
       sortDirection: 'asc',
       isFilterSidebarVisible: false,
+      dropdownOpen: false,
+      searchQuery: '',
       filters: {
         societe: [],
         domaine: [],
@@ -91,7 +119,11 @@ export default {
   computed: {
     filteredReclamations() {
       return this.reclamations.filter(item => {
-        return (
+        const matchesSearchQuery = Object.values(item).some(value => 
+          value.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+
+        return matchesSearchQuery && (
           (this.filters.societe.length === 0 || this.filters.societe.includes(item.societe)) &&
           (this.filters.domaine.length === 0 || this.filters.domaine.includes(item.domaine)) &&
           (this.filters.source.length === 0 || this.filters.source.includes(item.source)) &&
@@ -139,6 +171,29 @@ export default {
     },
     applyFilters(filters) {
       this.filters = filters;
+    },
+    getStatusClass(statut) {
+      switch(statut) {
+        case 'En cours de traitement':
+        case 'Initié':
+        case 'En réexamen':
+          return 'status-in-progress';
+        case 'Cloturée':
+        case 'Recours':
+        case 'Médiation':
+        case 'Contentieux':
+          return 'status-closed';
+        case 'Erronée':
+          return 'status-error';
+        default:
+          return '';
+      }
+    },
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
+    },
+    closeDropdown() {
+      this.dropdownOpen = false;
     }
   }
 };
@@ -220,8 +275,8 @@ export default {
   padding: 0.5rem 1rem;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
-  margin-bottom: 2rem;
-  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  margin-top: 2rem;
   font-size: 16px;
   display: flex;
   gap: 0.7rem;
@@ -235,8 +290,98 @@ export default {
   transition: 0.2s ease-in-out;
 }
 
+.search-bar {
+  width: 30rem;
+  padding: 0.7rem;
+  margin: 1rem 0;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
 .page-container.sidebar-open {
   position: fixed;
   width: 94.5%;
+}
+
+.statut {
+  border-radius: 9px;
+  padding: 0.5rem;
+  color: white;
+  max-width: 13rem;
+}
+
+.status-in-progress {
+  background-color: orange;
+}
+
+.status-error {
+  background-color: red;
+}
+
+.status-closed {
+  background-color: green;
+}
+
+.action-menu {
+  margin-left: auto;
+  position: relative;
+}
+
+.action-menu-button {
+  background-color: rgb(0, 131, 212);
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.5rem;
+  width: 100%;
+  transition: 0.2s ease-in-out; /* Transition pour le fond */
+}
+
+.action-menu-button:hover {
+  background-color: rgba(0, 131, 212, 0.659);
+}
+
+.action-menu-button .action {
+  margin-right: 0.5rem;
+}
+
+.action-menu-button .material-icons {
+  margin-left: auto; /* Place l'icône à droite du bouton */
+  transition: transform 0.3s ease; /* Transition pour la rotation */
+}
+
+.dropdown {
+  position: absolute;
+  z-index: 1150;
+  top: 100%;
+  right: 0;
+  list-style: none;
+  background-color: white;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  border: 1px solid rgb(175, 175, 175);
+  display: none; /* Par défaut, le menu est caché */
+}
+
+.action-menu:hover .dropdown {
+  display: block;
+}
+
+
+.dropdown li a {
+  text-decoration: none;
+  color: black;
+  display: block;
+  padding: 0.7rem;
+}
+
+.dropdown li a:hover {
+  background-color: rgb(0, 131, 212);;
+  color: white;
+  transition: 0.2s ease-in-out;
 }
 </style>

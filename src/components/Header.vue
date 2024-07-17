@@ -13,7 +13,7 @@
           <span class="username">{{ userName }}</span>
           <span class="material-icons" :class="{ 'rotate-arrow': dropdownOpen }">keyboard_arrow_left</span>
         </button>
-        <ul v-if="dropdownOpen" class="dropdown slide-down">
+        <ul v-if="dropdownOpen" class="dropdown">
           <li><a href="#">Profil</a></li>
           <li><a href="#">Paramètres</a></li>
           <li><a href="#">Déconnexion</a></li>
