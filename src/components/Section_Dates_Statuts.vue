@@ -9,8 +9,14 @@
         </div>
 
         <div class="donnees">
-            <p><strong>Référence :</strong> 029202393</p>
-            <p><strong>Référence :</strong> 029202393</p>
+            <p><strong>Date d'initiation :</strong> 17/07/2024</p>
+            <p><strong>Date de début du traitement :</strong> 17/07/2024</p>
+            <p><strong>Date de mise en réexamen :</strong> </p>
+            <p><strong>Date de cloture :</strong> 17/07/2024</p>
+            <p><strong>Date de recours :</strong> </p>
+            <p><strong>Date de médiation :</strong> </p>
+            <p><strong>Date contentieux :</strong> </p>
+            <p><strong>Date de mise en erreur :</strong> </p>
         </div>
         
     </div>
@@ -79,12 +85,14 @@ const ToggleSection = () => {
         padding: 1rem 1rem;
 
         p {
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             font-size: 0.9rem;
+            font-family: 'Poppins', sans-serif;
             
             strong {
                 font-weight: bold;
                 margin-right: 10px; /* Espace entre "Référence" et le numéro */
+                font-family: 'Poppins', sans-serif;
             }
         }
         
@@ -104,6 +112,4 @@ const ToggleSection = () => {
         }
     }
 }
-
-
 </style>

@@ -9,27 +9,76 @@
         </div>
 
         <div class="donnees">
-            <p><strong>Référence :</strong> 029202393</p>
-            <p><strong>Référence :</strong> 029202393</p>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Désignation</th>
+                        <th>Point de dispatching HAO</th>
+                        <th>Point de dispatching SAO</th>
+                        <th>Date de début</th>
+                        <th>Date de fin</th>
+                        <th>Salarié</th>
+                        <th>Importance</th>
+                        <th>Statut</th>
+                        <th>Avancement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(task, index) in tasks" :key="index">
+                        <td>{{ task.designation }}</td>
+                        <td>{{ task.dispatchingHAO }}</td>
+                        <td>{{ task.dispatchingSAO }}</td>
+                        <td>{{ task.startDate }}</td>
+                        <td>{{ task.endDate }}</td>
+                        <td>{{ task.employee }}</td>
+                        <td>{{ task.importance }}</td>
+                        <td>{{ task.status }}</td>
+                        <td>{{ task.progress }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        
     </div>
 </template>
 
 <script setup>
-
 import { ref } from 'vue'
 
 const is_expanded = ref(localStorage.getItem("is_expanded") === "false")
 
+const tasks = ref([
+    {
+        designation: 'Tâche 1',
+        dispatchingHAO: 'PIDS',
+        dispatchingSAO: 'DCD',
+        startDate: '2024-07-01',
+        endDate: '2024-07-05',
+        employee: 'Salarié 1',
+        importance: 'Haute',
+        status: 'En cours',
+        progress: '50%'
+    },
+    {
+        designation: 'Tâche 2',
+        dispatchingHAO: 'IG',
+        dispatchingSAO: 'SUPPORT',
+        startDate: '2024-07-06',
+        endDate: '2024-07-10',
+        employee: 'Salarié 2',
+        importance: 'Moyenne',
+        status: 'Terminée',
+        progress: '100%'
+    }
+    // Ajoutez d'autres tâches si nécessaire
+])
+
 const ToggleSection = () => {
     is_expanded.value = !is_expanded.value
-    localStorage.setItem("is_expanded", is_expanded.value)
+    localStorage.setItem("is_expanded", is_expanded.value.toString())
 }
 </script>
 
 <style lang="scss" scoped>
-
 #section {
     background-color: white;
     border-top: 4px solid rgb(0, 147, 215);
@@ -78,21 +127,31 @@ const ToggleSection = () => {
         transition: opacity 0.2s ease-out;
         padding: 1rem 1rem;
 
-        p {
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            
-            strong {
-                font-weight: bold;
-                margin-right: 10px; /* Espace entre "Référence" et le numéro */
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+
+            th, td {
+                padding: 12px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+
+            th {
+                background-color: #f2f2f2;
+            }
+
+            tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            tr:hover {
+                background-color: #f1f1f1;
             }
         }
-        
-        
-
     }
 
-    &.is-expanded{
+    &.is-expanded {
         max-height: 50rem;
 
         .donnees {
@@ -104,6 +163,4 @@ const ToggleSection = () => {
         }
     }
 }
-
-
 </style>

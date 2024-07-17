@@ -3,13 +3,18 @@
         <div class="title_section">
             <button class="section-toggle" @click="ToggleSection">
                 <span class="material-icons">arrow_right</span>
-                <h2>Pièce Jointes</h2>
+                <h2>Pièces Jointes</h2>
             </button>
         </div>
 
-        <div class="donnees" :style="{ display: is_expanded ? 'block' : 'none' }">
-            <p><strong>Référence :</strong> 029202393</p>
-            <p><strong>Référence :</strong> 029202393</p>
+        <div class="donnees">
+            <div class="attachments">
+                <div v-for="(attachment, index) in attachments" :key="index" class="attachment">
+                    <span class="filename">{{ attachment.name }}</span>
+                    <button @click="downloadAttachment(attachment)"><span class="material-icons">download</span></button>
+                    <button @click="viewAttachment(attachment)"><span class="material-icons">visibility</span></button>
+                </div>
+            </div>
         </div>
         
     </div>
@@ -20,13 +25,30 @@ import { ref } from 'vue'
 
 const is_expanded = ref(localStorage.getItem("is_expanded") === "false")
 
+// Exemple de pièces jointes
+const attachments = ref([
+    { name: 'Document 1.pdf', url: '../src/assets/Diagramme de classe omrane.pdf' },
+    { name: 'Image.png', url: '../src/assets/logo.png' }
+])
+
 const ToggleSection = () => {
     is_expanded.value = !is_expanded.value
     localStorage.setItem("is_expanded", is_expanded.value.toString())
 }
+
+const downloadAttachment = (attachment) => {
+    // Logique pour télécharger l'attachement
+    console.log('Téléchargement de:', attachment.name)
+}
+
+const viewAttachment = (attachment) => {
+    // Logique pour visualiser l'attachement
+    console.log('Visualisation de:', attachment.name)
+}
 </script>
 
 <style lang="scss" scoped>
+
 #section {
     background-color: white;
     border-top: 4px solid rgb(0, 147, 215);
@@ -34,8 +56,6 @@ const ToggleSection = () => {
     width: 100%;
     transition: 0.3s ease-in-out;
     max-height: calc(0rem + 32px);
-    margin-bottom: 2rem;
-    
 
     .title_section {
         background-color: rgb(229, 229, 229);
@@ -73,17 +93,33 @@ const ToggleSection = () => {
     }
 
     .donnees {
-        display: none; /* Masquer par défaut */
+        opacity: 0;
         padding: 1rem 1rem;
-        transition: display 0.2s ease-out;
+        transition: opacity 0.2s ease-out;
 
-        p {
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            
-            strong {
-                font-weight: bold;
-                margin-right: 10px; /* Espace entre "Référence" et le numéro */
+        .attachments {
+
+            .attachment {
+                display: flex;
+                align-items: center;
+                margin-bottom: 9px;
+
+                .material-icons {
+                    color:rgb(65, 65, 65);
+                    transition: 0.2s ease-out;
+                }
+
+                .material-icons:hover {
+                    color:var(--primary)
+                }
+                
+                .filename {
+                    font-family: 'Poppins', sans-serif;
+                }
+
+                button {
+                    margin-left: 1rem;
+                }
             }
         }
     }
@@ -91,13 +127,19 @@ const ToggleSection = () => {
     &.is-expanded {
         max-height: 50rem;
 
-        .donnees {
-            display: block; /* Afficher quand agrandi */
+        .title_section {
+            .material-icons {
+                transform: rotate(90deg);
+            }
         }
 
-        .material-icons {
-            transform: rotate(90deg);
+        .donnees {
+            opacity: 1;
         }
+
+        
+
+        
     }
 }
 </style>
