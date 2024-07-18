@@ -267,22 +267,16 @@ select {
 }
 
 .input-with-icon input {
-  padding-right: 30px; /* Ajustez l'espacement pour l'icône */
+  padding-right: 40px;
 }
 
 .search-icon {
   position: absolute;
+  right: 10px;
   top: 50%;
-  right: 10px; /* Ajustez l'espacement à droite */
   transform: translateY(-50%);
   cursor: pointer;
+  color: #0d0d0e;
 }
 
-.search-icon i {
-  color: #888;
-}
-
-.search-icon:hover i {
-  color: #333;
-}
 </style>

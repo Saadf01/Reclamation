@@ -11,45 +11,45 @@
           <div class="input-box">
             <label for="idrec" class="detail">Réclamant</label>
             <div class="input-with-icon">
-              <input type="text" id="idrec" name="idrec" v-model="reclamant" @click="openModal('reclamant')" required>
+              <input type="text" id="idrec" name="idrec" v-model="formState.reclamant"  @click="openModal('reclamant')" required>
               <span class="search-icon" @click="openModal('reclamant')">
-                <i class="fas fa-search"></i>
+                <font-awesome-icon :icon="['fas', 'search']" />
               </span>
             </div>
           </div>
           <div class="input-box">
             <label for="respo" class="detail">Responsable</label>
             <div class="input-with-icon">
-              <input type="text" id="respo" name="respo" v-model="responsable" @click="openModal('responsable')">
+              <input type="text" id="respo" name="respo" v-model="formState.responsable" @click="openModal('responsable')">
               <span class="search-icon" @click="openModal('responsable')">
-                <i class="fas fa-search"></i>
+                <font-awesome-icon :icon="['fas', 'search']" />
               </span>
             </div>
           </div>
           <div class="input-box">
             <label for="id-op" class="detail">Opération</label>
             <div class="input-with-icon">
-              <input type="text" id="id-op" name="id-op" v-model="operation" @click="openModal('operation')" required>
+              <input type="text" id="id-op" name="id-op" v-model="formState.operation" @click="openModal('operation')" required>
               <span class="search-icon" @click="openModal('operation')">
-                <i class="fas fa-search"></i>
+                <font-awesome-icon :icon="['fas', 'search']" />
               </span>
             </div>
           </div>
           <div class="input-box">
             <label for="relai" class="detail">Identification du relais réclamation</label>
-            <input type="text" id="relai" name="relai" v-model="identificationRelais">
+            <input type="text" id="relai" name="relai" v-model="formState.identificationRelais">
           </div>
           <div class="input-box">
             <label for="ref" class="detail">Référence bureau d'ordre</label>
-            <input type="text" id="ref" name="ref" v-model="referenceBureau">
+            <input type="text" id="ref" name="ref" v-model="formState.referenceBureau">
           </div>
           <div class="input-box">
             <label for="recep" class="detail">Réception de la réclamation</label>
-            <input type="text" id="recep" name="recep" v-model="receptionReclamation">
+            <input type="text" id="recep" name="recep" v-model="formState.receptionReclamation">
           </div>
           <div class="input-box">
             <label for="date_s" class="detail">Date source de la réclamation</label>
-            <input type="date" id="date_s" name="date_s" v-model="dateSource">
+            <input type="date" id="date_s" name="date_s" v-model="formState.dateSource">
           </div>
         </div>
       </div>
@@ -60,13 +60,13 @@
         <div class="rec-detail">
           <div class="input-box">
             <label for="domaine" class="detail">Domaine concerné</label>
-            <select id="domaine" v-model="domaine" @change="clearSortBy">
+            <select id="domaine" v-model="formState.domaine" @change="clearSortBy">
               <option value="pid">PID</option>
             </select>
           </div>
           <div class="input-box">
             <label for="reception" class="detail">Réception B.O</label>
-            <select id="reception" v-model="receptionBO" @change="clearSortBy">
+            <select id="reception" v-model="formState.receptionBO" @change="clearSortBy">
               <option value="Anciennes">Réclamations les plus anciennes</option>
               <option value="Recentes">Réclamations les plus récentes</option>
             </select>
@@ -202,24 +202,12 @@
 </template>
 
 <script>
+import { formState } from '@/Save';
+
 export default {
   data() {
     return {
-      reclamant: '',
-      responsable: '',
-      identificationRelais: '',
-      referenceBureau: '',
-      receptionReclamation: '',
-      dateSource: '',
-      operation: '',
-      domaine: '',
-      receptionBO: '',
-      sourceReclamation: '',
-      supportReclamation: '',
-      typeReclamant: '',
-      tache: '',
-      telephoneResponsableTache: '',
-      centreTraitement: '',
+      formState,
       showModal: false,
       modalType: '', // 'reclamant' ou 'responsable' ou 'operation'
       people: [
@@ -230,7 +218,7 @@ export default {
       showModalResponsable: false,
       modalTypeResponsable: '',
       showModalOperation: false,
-      modalTypeOperation: '', // 'operation'
+      modalTypeOperation: '',
       operations: [
         { code: 'OP001', description: 'Opération 1' },
         { code: 'OP002', description: 'Opération 2' },
@@ -238,12 +226,11 @@ export default {
       ],
       selectedOperation: null,
       searchQuery: '',
-      searchQueryResponsable: '', // Ajout de la variable pour la recherche du responsable
+      searchQueryResponsable: '',
       searchOperationQuery: '',
       showDispatchSection: false,
-       cancelTransferText: 'Transferer',
+      cancelTransferText: 'Transferer',
     };
-
   },
   methods: {
     openModal(type) {
@@ -260,15 +247,15 @@ export default {
     },
     closeModal() {
       this.showModal = false;
-      this.searchQuery = ''; // Réinitialiser la recherche lors de la fermeture de la modal
+      this.searchQuery = '';
     },
     closeModalResponsable() {
       this.showModalResponsable = false;
-      this.searchQueryResponsable = ''; // Réinitialiser la recherche lors de la fermeture de la modal
+      this.searchQueryResponsable = '';
     },
     closeModalOperation() {
       this.showModalOperation = false;
-      this.searchOperationQuery = ''; // Réinitialiser la recherche lors de la fermeture de la modal
+      this.searchOperationQuery = '';
     },
     toggleTransferSection() {
       this.showDispatchSection = !this.showDispatchSection;
@@ -280,30 +267,28 @@ export default {
     },
     selectPerson(person, type) {
       if (type === 'responsable') {
-        this.responsable = person.name;
+        this.formState.responsable = person.name;
       } else {
-        this.reclamant = person.name;
+        this.formState.reclamant = person.name;
       }
       this.closeModal();
+      this.closeModalResponsable();
     },
     selectOperation(op) {
       this.selectedOperation = op;
-      this.operation = op.code; // Mettre à jour le champ Opération avec le code
+      this.formState.operation = op.description;
       this.closeModalOperation();
     },
     redirectToCreate(type) {
       if (type === 'responsable') {
-        // Rediriger vers la page de création de responsable
         this.$router.push('/ResponsablePage');
         this.closeModalResponsable();
       } else {
-        // Rediriger vers la page de création de réclamant
         this.$router.push('/ReclamantPage');
         this.closeModal();
       }
     },
     redirectToCreateOperation() {
-      // Rediriger vers la page de création d'opération
       this.$router.push('/OperationPage');
       this.closeModalOperation();
     },
@@ -327,6 +312,5 @@ export default {
       );
     },
   },
-  
 };
 </script>
