@@ -28,16 +28,12 @@
 
         <div class="sections">
             <Section_Donnees_Generales></Section_Donnees_Generales>
-        </div>
-
-        <div class="sections">
             <Section_Dates_Statuts></Section_Dates_Statuts>
-            <Section_Donnees_Techniques></Section_Donnees_Techniques>
         </div>
 
         <div class="sections">
             <Section_Donnees_Organisation></Section_Donnees_Organisation>
-            <Section_Dispatching></Section_Dispatching>
+            <Section_Donnees_Techniques></Section_Donnees_Techniques>
         </div>
 
         <div class="sections">
@@ -57,7 +53,6 @@
 <script setup>
 import Section_Donnees_Generales from '@/components/Section_Donnees_Generales.vue'
 import Section_Dates_Statuts from '@/components/Section_Dates_Statuts.vue'
-import Section_Dispatching from '@/components/Section_Dispatching.vue'
 import Section_Donnees_Organisation from '@/components/Section_Donnees_Organisation.vue'
 import Section_Donnees_Techniques from '@/components/Section_Donnees_Techniques.vue'
 import Section_Pieces_Jointes from '@/components/Section_Pieces_Jointes.vue'
