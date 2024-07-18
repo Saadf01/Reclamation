@@ -44,12 +44,28 @@
             <input type="text" id="ref" name="ref" v-model="formState.referenceBureau">
           </div>
           <div class="input-box">
-            <label for="recep" class="detail">Réception de la réclamation</label>
-            <input type="text" id="recep" name="recep" v-model="formState.receptionReclamation">
+            <label for="recep" class="detail">Date réception</label>
+            <input type="date" id="recep" name="recep" v-model="formState.receptionReclamation">
           </div>
           <div class="input-box">
-            <label for="date_s" class="detail">Date source de la réclamation</label>
-            <input type="date" id="date_s" name="date_s" v-model="formState.dateSource">
+            <label for="date_dec" class="detail">Date de déclaration</label>
+            <input type="date" id="date_dec" name="date_dec" v-model="formState.dateSource">
+          </div>
+          <div class="input-box">
+            <label for="date_souh" class="detail">Date de réponse souhaitée</label>
+            <input type="date" id="date_souh" name="date_souh" v-model="formState.dateSource">
+          </div>
+          <div class="input-box">
+            <label for="textarea1" class="detail">Description</label>
+            <textarea id="textarea1" name="textarea1" v-model="formState.textarea1"></textarea>
+          </div>
+          <div class="input-box">
+            <label for="textarea2" class="detail">Dispositions particulieres</label>
+            <textarea id="textarea2" name="textarea2" v-model="formState.textarea2"></textarea>
+          </div>
+          <div class="input-box">
+            <label for="textarea3" class="detail">Commentaire</label>
+            <textarea id="textarea3" name="textarea3" v-model="formState.textarea3"></textarea>
           </div>
         </div>
       </div>
@@ -93,8 +109,44 @@
           </div>
         </div>
       </div>
-
-      <!-- Section Dispatching -->
+      <div class="blue-borders">
+        <h2>Données d'organisation</h2>
+        <div class="rec-detail">
+          <div class="input-box">
+            <label for="idrec" class="detail">Societé</label>
+            <div class="input-with-icon">
+              <input type="text" id="idrec" name="idrec" v-model="formState.reclamant"  @click="openModal('reclamant')" required>
+              <span class="search-icon" @click="openModal('reclamant')">
+                <font-awesome-icon :icon="['fas', 'search']" />
+              </span>
+            </div>
+          </div>
+          <div class="input-box">
+            <label for="idrec" class="detail">Agence commerciale</label>
+            <div class="input-with-icon">
+              <input type="text" id="idrec" name="idrec" v-model="formState.reclamant"  @click="openModal('reclamant')" required>
+              <span class="search-icon" @click="openModal('reclamant')">
+                <font-awesome-icon :icon="['fas', 'search']" />
+              </span>
+            </div>
+          </div>
+          <div class="input-box">
+            <label for="idrec" class="detail">Numero du dossier mediateur</label>
+              <input type="text" id="idrec" required>
+            </div>
+          
+          <div class="input-box">
+            <label for="idrec" class="detail">Destination de la reponse</label>
+            <div class="input-with-icon">
+              <input type="text" id="idrec" name="idrec" v-model="formState.reclamant"  @click="openModal('reclamant')" required>
+              <span class="search-icon" @click="openModal('reclamant')">
+                <font-awesome-icon :icon="['fas', 'search']" />
+              </span>
+            </div>
+          </div>
+      </div>
+      </div>
+      <!-- Section traitement reclamation -->
       <div class="blue-borders">
         <h2>Détail traitement réclamation</h2>
         <div class="rec-detail">
@@ -107,16 +159,56 @@
             <input type="text" id="resp-tach" v-model="telephoneResponsableTache">
           </div>
           <div class="input-box">
-            <label for="trait" class="detail">Centre de traitement</label>
-            <select id="filial" v-model="centreTraitement" @change="clearSortBy">
+            <label for="hao" class="detail">Centre de traitement HAO</label>
+            <select id="hao" v-model="formState.centreTraitementhao" @change="clearSortBy">
               <option value="pid">PID</option>
               <option value="pid">PID</option>
               <option value="pid">PID</option>
             </select>
           </div>
+          <div class="input-box">
+            <label for="sao" class="detail">Centre de traitement SAO</label>
+            <select id="sao" v-model="formState.centreTraitementsao" @change="clearSortBy">
+              <option value="pid">PID</option>
+              <option value="pid">PID</option>
+              <option value="pid">PID</option>
+            </select>
+          </div>
+          <div class="input-box">
+            <label for="date_debut" class="detail">Date debut</label>
+            <input type="date" id="date_debut" name="date_debut" v-model="formState.datedebut">
+          </div>
+          <div class="input-box">
+            <label for="date_fin" class="detail">Date fin</label>
+            <input type="date" id="date_fin" name="date_fin" v-model="formState.datefin">
+          </div>
+          <div class="input-box">
+            <label for="imp" class="detail">Importance</label>
+            <select id="imp" v-model="formState.importance" @change="clearSortBy">
+              <option value="pid">Haute</option>
+              <option value="pid">Moyenne</option>
+              <option value="pid">Faible</option>
+            </select>
+          </div>
+          <div class="input-box">
+            <label for="avancement" class="detail">Avancement</label>
+            <input type="text" id="avancement" name="avancement" v-model="formState.avancement">
+          </div>
         </div>
       </div>
-
+      <div class="blue-borders">
+        <h2>Pieces jointes</h2>
+        <div class="rec-detail">
+          <div class="input-box file-input-box">
+            <div class="custom-file-input" @click="triggerFileInput('pdfInput')">Sélectionner un fichier PDF</div>
+            <input type="file" id="pdf-upload" name="pdf-upload" accept=".pdf" @change="handleFileUpload" ref="pdfInput" class="hidden-input">
+          </div>
+          <div class="input-box file-input-box">
+            <div class="custom-file-input" @click="triggerFileInput('imageInput')">Sélectionner une image</div>
+            <input type="file" id="image-upload" name="image-upload" accept="image/*" @change="handleImageUpload" ref="imageInput" class="hidden-input">
+          </div>
+        </div>
+      </div>
       <!-- Fenêtre modale pour la sélection de réclamant, responsable et opération -->
       <div v-if="showModal || showModalResponsable || showModalOperation" class="modal">
         <div class="modal-content">
@@ -287,6 +379,19 @@ export default {
         this.$router.push('/ReclamantPage');
         this.closeModal();
       }
+    },
+    handleFileUpload(event) {
+      const file = event.target.files[0];
+      console.log('PDF File uploaded:', file);
+      // Handle the file upload logic here
+    },
+    handleImageUpload(event) {
+      const file = event.target.files[0];
+      console.log('Image uploaded:', file);
+      // Handle the image upload logic here
+    },
+    triggerFileInput(refName) {
+      this.$refs[refName].click();
     },
     redirectToCreateOperation() {
       this.$router.push('/OperationPage');

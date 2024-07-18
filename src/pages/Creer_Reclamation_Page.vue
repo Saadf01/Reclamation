@@ -67,14 +67,16 @@ export default {
 
 .input-box label,
 .input-box input,
-.input-box select {
+.input-box select,
+.input-box textarea  {
   display: block;
   width: 100%;
   margin-bottom: 0.5rem;
 }
 
 .input-box input,
-.input-box select {
+.input-box select,
+.input-box textarea  {
   height: 45px;
   padding: 0.5rem;
   font-size: 1rem;
@@ -278,5 +280,24 @@ select {
   cursor: pointer;
   color: #0d0d0e;
 }
+.file-input-box {
+  position: relative;
+}
 
+.hidden-input {
+  display: none;
+}
+
+.custom-file-input {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.custom-file-input:hover {
+  background-color: #e0e0e0;
+}
 </style>

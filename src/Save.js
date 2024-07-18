@@ -10,6 +10,15 @@ export const formState = reactive({
   receptionReclamation: '',
   dateSource: '',
   domaine: '',
-  receptionBO: ''
+  receptionBO: '',
+  textarea1: '', // New textarea
+        textarea2: '', // New textarea
+        textarea3: '',
+        centreTraitementhao:'',
+        centreTraitementsao:'',
+        datedebut:'',
+        datefin:'',
+        importance:'',
+        avancement:''
 });
     
