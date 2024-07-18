@@ -5,7 +5,7 @@
     </div>
 
     <div class="saisi_form">
-      <Form_Creation_Reclamation />  
+      <form_creation_reclamation />  
     </div>
     
   </div>
@@ -14,11 +14,11 @@
 
 
 <script>
-import Form_Creation_Reclamation from "../components/Form_Creation_Reclamation.vue"
+import form_creation_reclamation from "../components/form_creation_reclamation.vue"
 export default {
   name: "CreerReclamationPage",
   components:{
-    Form_Creation_Reclamation,
+    form_creation_reclamation,
   },
   data() {
     return {
@@ -37,7 +37,7 @@ export default {
 
 .page_container {
   background-color: #f0f0f0;
-  min-height: 100vh;
+  height: 100%;
   padding: 0rem 2rem;
   margin-bottom: 2rem;
 }

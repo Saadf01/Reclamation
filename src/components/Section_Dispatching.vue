@@ -9,8 +9,10 @@
         </div>
 
         <div class="donnees">
-            <p><strong>Référence :</strong> 029202393</p>
-            <p><strong>Référence :</strong> 029202393</p>
+            <p><strong>Dispatching :</strong> 029202393</p>
+            <p><strong>Date de réponse souhaitée :</strong> 029202393</p>
+            <p><strong>Nom de l'opération :</strong> 029202393</p>
+            <p><strong>Ville concernée :</strong> 029202393</p>
         </div>
         
     </div>
@@ -79,12 +81,14 @@ const ToggleSection = () => {
         padding: 1rem 1rem;
 
         p {
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             font-size: 0.9rem;
+            font-family: 'Poppins', sans-serif;
             
             strong {
                 font-weight: bold;
                 margin-right: 10px; /* Espace entre "Référence" et le numéro */
+                font-family: 'Poppins', sans-serif;
             }
         }
         

@@ -9,8 +9,20 @@
         </div>
 
         <div class="donnees">
-            <p><strong>Référence :</strong> 029202393</p>
-            <p><strong>Référence :</strong> 029202393</p>
+            <p><strong>ID réclamation :</strong> 029202393</p>
+            <p><strong>Réclamant :</strong> 029202393</p>
+            <p><strong>Objet :</strong> 029202393</p>
+            <p><strong>Responsable :</strong> 029202393</p>
+            <p><strong>Identification relai réclamation :</strong> 029202393</p>
+            <p><strong>Référence Bureau d'ordre :</strong> 029202393</p>
+            <p><strong>Nom de l'opération :</strong> 029202393</p>
+            <p><strong>Date de réponse souhaitée :</strong> 029202393</p>
+            <p><strong>Date de réception :</strong> 029202393</p>
+            <p><strong>Date de déclaration :</strong> 029202393</p>
+            <p><strong>Description :</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+            <p><strong>Dispostions particulières :</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+            <p><strong>Commentaire :</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+
         </div>
         
     </div>
@@ -34,7 +46,7 @@ const ToggleSection = () => {
     background-color: white;
     border-top: 4px solid rgb(0, 147, 215);
     border-radius: 5px;
-    width: 100%;
+    width: 50%;
     transition: 0.3s ease-in-out;
     max-height: calc(0rem + 32px);
     position: relative; /* Assurez-vous que les sections sont positionnées de manière relative ou statique */
@@ -81,12 +93,14 @@ const ToggleSection = () => {
         padding: 1rem 1rem;
 
         p {
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             font-size: 0.9rem;
+            font-family: 'Poppins', sans-serif;
             
             strong {
                 font-weight: bold;
                 margin-right: 10px; /* Espace entre "Référence" et le numéro */
+                font-family: 'Poppins', sans-serif;
             }
         }
         

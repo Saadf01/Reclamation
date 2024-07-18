@@ -68,7 +68,7 @@ button {
     .content {
         display: flex;
         flex: 1; /* Permet au contenu principal de prendre tout l'espace restant */
-        margin-top: 3.6rem;
+        margin-top: 3.7rem;
 
     }
 
