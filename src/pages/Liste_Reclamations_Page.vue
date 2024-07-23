@@ -14,7 +14,7 @@
 
       <div class="filter">
         <!-- Composant Filtre -->
-        <FiltreSidebar :isVisible="isFilterSidebarVisible" @toggle-sidebar="toggleFilterSidebar" @reset-filters="resetFilters" @apply-filters="applyFilters" />
+        <FiltreComponent :isVisible="isFilterSidebarVisible" @toggle-sidebar="toggleFilterSidebar" @reset-filters="resetFilters" @apply-filters="applyFilters" />
       </div>
 
 
@@ -88,13 +88,13 @@
 </template>
 
 <script>
-import FiltreSidebar from '@/components/Filtre_Sidebar.vue';
+import FiltreComponent from '@/components/Filtre_Component.vue';
 
 
 export default {
   name: 'Liste_Reclamations_Page',
   components: {
-    FiltreSidebar
+    FiltreComponent
   },
   data() {
     return {

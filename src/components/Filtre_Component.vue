@@ -75,7 +75,7 @@
 
 <script>
 export default {
-  name: 'FiltreSidebar',
+  name: 'FiltreComponent',
   props: {
     isVisible: {
       type: Boolean,
