@@ -7,11 +7,16 @@
     <div class="blue-border">
       <h2>Rechercher une réclamation</h2>
 
-      <!-- Bouton pour ouvrir les filtres -->
-      <button @click="toggleFilterSidebar" class="filter-button">
+      <div class="filters-container">
         <span class="material-icons">tune</span>
-        Filtres
-      </button>
+        <span class="filters-text">Filtres</span>
+      </div> 
+
+      <div class="filter">
+        <!-- Composant Filtre -->
+        <FiltreSidebar :isVisible="isFilterSidebarVisible" @toggle-sidebar="toggleFilterSidebar" @reset-filters="resetFilters" @apply-filters="applyFilters" />
+      </div>
+
 
       <!-- Barre de recherche -->
       <input v-model="searchQuery" type="text" placeholder="Rechercher..." class="search-bar">
@@ -79,9 +84,7 @@
       </table>
     </div>
 
-    <!-- Composant Filtre -->
-    <FiltreSidebar :isVisible="isFilterSidebarVisible" @toggle-sidebar="toggleFilterSidebar" @reset-filters="resetFilters" @apply-filters="applyFilters" />
-  </div>
+     </div>
 </template>
 
 <script>
@@ -123,6 +126,9 @@ export default {
           value.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
         );
 
+        const isDateReceptionAfterFilter = !this.filters.date_reception || new Date(item.date_reception) >= new Date(this.filters.date_reception);
+        const isDateDeclarationAfterFilter = !this.filters.date_declaration || new Date(item.date_declaration) >= new Date(this.filters.date_declaration);
+
         return matchesSearchQuery && (
           (this.filters.societe.length === 0 || this.filters.societe.includes(item.societe)) &&
           (this.filters.domaine.length === 0 || this.filters.domaine.includes(item.domaine)) &&
@@ -130,8 +136,8 @@ export default {
           (this.filters.support.length === 0 || this.filters.support.includes(item.support)) &&
           (this.filters.statut.length === 0 || this.filters.statut.includes(item.statut)) &&
           (this.filters.reception_bo.length === 0 || this.filters.reception_bo.includes(item.reception_bo)) &&
-          (this.filters.date_declaration.length === 0 || this.filters.date_declaration.includes(item.date_declaration)) &&
-          (!this.filters.date_reception || item.date_reception === this.filters.date_reception)
+          isDateReceptionAfterFilter &&
+          isDateDeclarationAfterFilter
         );
       }).sort((a, b) => {
         let modifier = this.sortDirection === 'asc' ? 1 : -1;
@@ -175,7 +181,7 @@ export default {
     getStatusClass(statut) {
       switch(statut) {
         case 'En cours de traitement':
-        case 'Initié':
+        case 'Initiée':
         case 'En réexamen':
           return 'status-in-progress';
         case 'Cloturée':
@@ -200,7 +206,7 @@ export default {
 </script>
 
 
-<style scoped>
+<style lang="scss" scoped>
 .page-container {
   background-color: #f0f0f0;
   min-height: 100vh;
@@ -224,6 +230,7 @@ export default {
   background-color: white;
   border-radius: 5px;
   padding: 1rem;
+  margin-bottom: 3rem;
 }
 
 .blue-border h2 {
@@ -269,25 +276,24 @@ export default {
   background-color: #f1f1f1;
 }
 
-.filter-button {
-  color: black;
+.filters-container {
   border: 1px solid;
   padding: 0.5rem 1rem;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
   margin-bottom: 0.5rem;
   margin-top: 2rem;
-  font-size: 16px;
   display: flex;
   gap: 0.7rem;
   border-radius: 10px;
   border-color: rgb(195, 195, 195);
-  transition: 0.2s ease-in-out;
-}
+  align-items: center;
+  width: 8rem;
 
-.filter-button:hover {
-  background-color: #e8e8e8;
-  transition: 0.2s ease-in-out;
+  .filters-text {
+    color: black;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+  }
+
 }
 
 .search-bar {
