@@ -17,10 +17,8 @@
         <FiltreComponent :isVisible="isFilterSidebarVisible" @toggle-sidebar="toggleFilterSidebar" @reset-filters="resetFilters" @apply-filters="applyFilters" />
       </div>
 
-
       <!-- Barre de recherche -->
       <input v-model="searchQuery" type="text" placeholder="Rechercher..." class="search-bar">
-
 
       <!-- Tableau des réclamations -->
       <table class="styled-table">
@@ -43,7 +41,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in filteredReclamations" :key="index">
+          <tr v-for="(item, index) in paginatedReclamations" :key="index">
             <td>{{ item.id_reclamation }}</td>
             <td>{{ item.societe }}</td>
             <td>{{ item.responsable }}</td>
@@ -82,14 +80,30 @@
           </tr>
         </tbody>
       </table>
-    </div>
 
-     </div>
+      <!-- Contrôles de pagination -->
+      <div class="pagination">
+        <button class="previous-button" @click="prevPage" :disabled="currentPage === 1">Précédent</button>
+        <div class="page-buttons">
+          <button
+            v-for="page in getPageButtons"
+            :key="page"
+            @click="setPage(page)"
+            :class="{ active: page === currentPage }"
+          >
+            {{ page }}
+          </button>
+        </div>
+        <button class="next-button" @click="nextPage" :disabled="currentPage === totalPages">Suivant</button>
+      </div>
+
+
+    </div>
+  </div>
 </template>
 
 <script>
 import FiltreComponent from '@/components/Filtre_Component.vue';
-
 
 export default {
   name: 'Liste_Reclamations_Page',
@@ -114,9 +128,14 @@ export default {
         date_reception: ''
       },
       reclamations: [
+        // Exemple de données ; remplacez par des données réelles
         { id_reclamation: '1', societe: 'Al Omrane Casablanca - Settat', responsable: 'Responsable 1', reclamant: 'Reclamant 1', objet: 'Objet 1', domaine: 'Autre', source: 'Réclamant', operation: 'ANNASSIM', reception_bo: 'SAO', support: 'Courrier', date_reception: '2023-01-01', date_declaration: '2023-01-02', statut: 'En cours de traitement' },
-        { id_reclamation: '2', societe: 'Al Omrane Fès Meknès', responsable: 'Responsable 2', reclamant: 'Reclamant 2', objet: 'Objet 2', domaine: 'Accueil - Renseignements', source: 'Administration', operation: 'ANNASSIM', reception_bo: 'HAO', support: 'Site Web', date_reception: '2023-02-01', date_declaration: '2023-02-02', statut: 'Cloturée' }
-      ]
+        { id_reclamation: '1', societe: 'Al Omrane Casablanca - Settat', responsable: 'Responsable 1', reclamant: 'Reclamant 1', objet: 'Objet 1', domaine: 'Autre', source: 'Réclamant', operation: 'ANNASSIM', reception_bo: 'SAO', support: 'Courrier', date_reception: '2023-01-01', date_declaration: '2023-01-02', statut: 'En cours de traitement' },
+        { id_reclamation: '1', societe: 'Al Omrane Casablanca - Settat', responsable: 'Responsable 1', reclamant: 'Reclamant 1', objet: 'Objet 1', domaine: 'Autre', source: 'Réclamant', operation: 'ANNASSIM', reception_bo: 'SAO', support: 'Courrier', date_reception: '2023-01-01', date_declaration: '2023-01-02', statut: 'En cours de traitement' },
+        { id_reclamation: '2', societe: 'Al Omrane Fès Meknès', responsable: 'Responsable 2', reclamant: 'Reclamant 2', objet: 'Objet 2', domaine: 'Accueil - Renseignements', source: 'Administration', operation: 'ANNASSIM', reception_bo: 'HAO', support: 'Site Web', date_reception: '2023-02-01', date_declaration: '2023-02-02', statut: 'Cloturée' },
+      ],
+      currentPage: 1,
+      itemsPerPage: 10
     };
   },
   computed: {
@@ -126,8 +145,11 @@ export default {
           value.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
         );
 
-        const isDateReceptionAfterFilter = !this.filters.date_reception || new Date(item.date_reception) >= new Date(this.filters.date_reception);
-        const isDateDeclarationAfterFilter = !this.filters.date_declaration || new Date(item.date_declaration) >= new Date(this.filters.date_declaration);
+        const isDateReceptionInRange = (!this.filters.date_reception_start || new Date(item.date_reception) >= new Date(this.filters.date_reception_start)) &&
+                                       (!this.filters.date_reception_end || new Date(item.date_reception) <= new Date(this.filters.date_reception_end));
+                                       
+        const isDateDeclarationInRange = (!this.filters.date_declaration_start || new Date(item.date_declaration) >= new Date(this.filters.date_declaration_start)) &&
+                                         (!this.filters.date_declaration_end || new Date(item.date_declaration) <= new Date(this.filters.date_declaration_end));
 
         return matchesSearchQuery && (
           (this.filters.societe.length === 0 || this.filters.societe.includes(item.societe)) &&
@@ -136,8 +158,8 @@ export default {
           (this.filters.support.length === 0 || this.filters.support.includes(item.support)) &&
           (this.filters.statut.length === 0 || this.filters.statut.includes(item.statut)) &&
           (this.filters.reception_bo.length === 0 || this.filters.reception_bo.includes(item.reception_bo)) &&
-          isDateReceptionAfterFilter &&
-          isDateDeclarationAfterFilter
+          isDateReceptionInRange &&
+          isDateDeclarationInRange
         );
       }).sort((a, b) => {
         let modifier = this.sortDirection === 'asc' ? 1 : -1;
@@ -145,6 +167,33 @@ export default {
         if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
         return 0;
       });
+    },
+    paginatedReclamations() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.filteredReclamations.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredReclamations.length / this.itemsPerPage);
+    },
+    getPageButtons() {
+      const totalPages = this.totalPages;
+      const pageButtons = [];
+      const maxButtons = 10;
+      const half = Math.floor(maxButtons / 2);
+
+      let start = Math.max(this.currentPage - half, 1);
+      let end = Math.min(start + maxButtons - 1, totalPages);
+
+      if (end - start < maxButtons - 1) {
+        start = Math.max(end - maxButtons + 1, 1);
+      }
+
+      for (let i = start; i <= end; i++) {
+        pageButtons.push(i);
+      }
+
+      return pageButtons;
     }
   },
   methods: {
@@ -200,7 +249,20 @@ export default {
     },
     closeDropdown() {
       this.dropdownOpen = false;
-    }
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+    setPage(page) {
+    this.currentPage = page;
+  }
   }
 };
 </script>
@@ -390,4 +452,59 @@ export default {
   color: white;
   transition: 0.2s ease-in-out;
 }
+
+.pagination {
+  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+
+.page-buttons {
+  display: flex;
+}
+
+.page-buttons button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  width: 2.8rem;
+  height: 2.8rem;
+}
+
+.page-buttons button.active {
+  background-color: #004187;
+}
+
+.page-buttons button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin: 10px 3px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination button:hover {
+  background-color: #007bffc1;
+}
+
+.pagination .next-button,
+.pagination .previous-button {
+  height: 2.8rem;
+  padding: 0rem 1rem;
+}
+
 </style>
