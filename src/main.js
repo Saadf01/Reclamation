@@ -10,6 +10,9 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 /* import specific icons */
 import {fas} from '@fortawesome/free-solid-svg-icons'
 
+// Importation de la feuille de style de vue-multiselect
+import 'vue-multiselect/dist/vue-multiselect.css';
+
 /* add icons to the library */
 library.add(fas)
 

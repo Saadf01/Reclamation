@@ -7,15 +7,18 @@
     <div class="blue-border">
       <h2>Rechercher une réclamation</h2>
 
-      <!-- Bouton pour ouvrir les filtres -->
-      <button @click="toggleFilterSidebar" class="filter-button">
+      <div class="filters-container">
         <span class="material-icons">tune</span>
-        Filtres
-      </button>
+        <span class="filters-text">Filtres</span>
+      </div> 
+
+      <div class="filter">
+        <!-- Composant Filtre -->
+        <FiltreComponent :isVisible="isFilterSidebarVisible" @toggle-sidebar="toggleFilterSidebar" @reset-filters="resetFilters" @apply-filters="applyFilters" />
+      </div>
 
       <!-- Barre de recherche -->
       <input v-model="searchQuery" type="text" placeholder="Rechercher..." class="search-bar">
-
 
       <!-- Tableau des réclamations -->
       <table class="styled-table">
@@ -38,7 +41,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in filteredReclamations" :key="index">
+          <tr v-for="(item, index) in paginatedReclamations" :key="index">
             <td>{{ item.id_reclamation }}</td>
             <td>{{ item.societe }}</td>
             <td>{{ item.responsable }}</td>
@@ -77,21 +80,35 @@
           </tr>
         </tbody>
       </table>
-    </div>
 
-    <!-- Composant Filtre -->
-    <FiltreSidebar :isVisible="isFilterSidebarVisible" @toggle-sidebar="toggleFilterSidebar" @reset-filters="resetFilters" @apply-filters="applyFilters" />
+      <!-- Contrôles de pagination -->
+      <div class="pagination">
+        <button class="previous-button" @click="prevPage" :disabled="currentPage === 1">Précédent</button>
+        <div class="page-buttons">
+          <button
+            v-for="page in getPageButtons"
+            :key="page"
+            @click="setPage(page)"
+            :class="{ active: page === currentPage }"
+          >
+            {{ page }}
+          </button>
+        </div>
+        <button class="next-button" @click="nextPage" :disabled="currentPage === totalPages">Suivant</button>
+      </div>
+
+
+    </div>
   </div>
 </template>
 
 <script>
-import FiltreSidebar from '@/components/Filtre_Sidebar.vue';
-
+import FiltreComponent from '@/components/Filtre_Component.vue';
 
 export default {
   name: 'Liste_Reclamations_Page',
   components: {
-    FiltreSidebar
+    FiltreComponent
   },
   data() {
     return {
@@ -111,9 +128,14 @@ export default {
         date_reception: ''
       },
       reclamations: [
+        // Exemple de données ; remplacez par des données réelles
         { id_reclamation: '1', societe: 'Al Omrane Casablanca - Settat', responsable: 'Responsable 1', reclamant: 'Reclamant 1', objet: 'Objet 1', domaine: 'Autre', source: 'Réclamant', operation: 'ANNASSIM', reception_bo: 'SAO', support: 'Courrier', date_reception: '2023-01-01', date_declaration: '2023-01-02', statut: 'En cours de traitement' },
-        { id_reclamation: '2', societe: 'Al Omrane Fès Meknès', responsable: 'Responsable 2', reclamant: 'Reclamant 2', objet: 'Objet 2', domaine: 'Accueil - Renseignements', source: 'Administration', operation: 'ANNASSIM', reception_bo: 'HAO', support: 'Site Web', date_reception: '2023-02-01', date_declaration: '2023-02-02', statut: 'Cloturée' }
-      ]
+        { id_reclamation: '1', societe: 'Al Omrane Casablanca - Settat', responsable: 'Responsable 1', reclamant: 'Reclamant 1', objet: 'Objet 1', domaine: 'Autre', source: 'Réclamant', operation: 'ANNASSIM', reception_bo: 'SAO', support: 'Courrier', date_reception: '2023-01-01', date_declaration: '2023-01-02', statut: 'En cours de traitement' },
+        { id_reclamation: '1', societe: 'Al Omrane Casablanca - Settat', responsable: 'Responsable 1', reclamant: 'Reclamant 1', objet: 'Objet 1', domaine: 'Autre', source: 'Réclamant', operation: 'ANNASSIM', reception_bo: 'SAO', support: 'Courrier', date_reception: '2023-01-01', date_declaration: '2023-01-02', statut: 'En cours de traitement' },
+        { id_reclamation: '2', societe: 'Al Omrane Fès Meknès', responsable: 'Responsable 2', reclamant: 'Reclamant 2', objet: 'Objet 2', domaine: 'Accueil - Renseignements', source: 'Administration', operation: 'ANNASSIM', reception_bo: 'HAO', support: 'Site Web', date_reception: '2023-02-01', date_declaration: '2023-02-02', statut: 'Cloturée' },
+      ],
+      currentPage: 1,
+      itemsPerPage: 10
     };
   },
   computed: {
@@ -123,6 +145,12 @@ export default {
           value.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
         );
 
+        const isDateReceptionInRange = (!this.filters.date_reception_start || new Date(item.date_reception) >= new Date(this.filters.date_reception_start)) &&
+                                       (!this.filters.date_reception_end || new Date(item.date_reception) <= new Date(this.filters.date_reception_end));
+                                       
+        const isDateDeclarationInRange = (!this.filters.date_declaration_start || new Date(item.date_declaration) >= new Date(this.filters.date_declaration_start)) &&
+                                         (!this.filters.date_declaration_end || new Date(item.date_declaration) <= new Date(this.filters.date_declaration_end));
+
         return matchesSearchQuery && (
           (this.filters.societe.length === 0 || this.filters.societe.includes(item.societe)) &&
           (this.filters.domaine.length === 0 || this.filters.domaine.includes(item.domaine)) &&
@@ -130,8 +158,8 @@ export default {
           (this.filters.support.length === 0 || this.filters.support.includes(item.support)) &&
           (this.filters.statut.length === 0 || this.filters.statut.includes(item.statut)) &&
           (this.filters.reception_bo.length === 0 || this.filters.reception_bo.includes(item.reception_bo)) &&
-          (this.filters.date_declaration.length === 0 || this.filters.date_declaration.includes(item.date_declaration)) &&
-          (!this.filters.date_reception || item.date_reception === this.filters.date_reception)
+          isDateReceptionInRange &&
+          isDateDeclarationInRange
         );
       }).sort((a, b) => {
         let modifier = this.sortDirection === 'asc' ? 1 : -1;
@@ -139,6 +167,33 @@ export default {
         if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
         return 0;
       });
+    },
+    paginatedReclamations() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.filteredReclamations.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredReclamations.length / this.itemsPerPage);
+    },
+    getPageButtons() {
+      const totalPages = this.totalPages;
+      const pageButtons = [];
+      const maxButtons = 10;
+      const half = Math.floor(maxButtons / 2);
+
+      let start = Math.max(this.currentPage - half, 1);
+      let end = Math.min(start + maxButtons - 1, totalPages);
+
+      if (end - start < maxButtons - 1) {
+        start = Math.max(end - maxButtons + 1, 1);
+      }
+
+      for (let i = start; i <= end; i++) {
+        pageButtons.push(i);
+      }
+
+      return pageButtons;
     }
   },
   methods: {
@@ -175,7 +230,7 @@ export default {
     getStatusClass(statut) {
       switch(statut) {
         case 'En cours de traitement':
-        case 'Initié':
+        case 'Initiée':
         case 'En réexamen':
           return 'status-in-progress';
         case 'Cloturée':
@@ -194,13 +249,26 @@ export default {
     },
     closeDropdown() {
       this.dropdownOpen = false;
-    }
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+    setPage(page) {
+    this.currentPage = page;
+  }
   }
 };
 </script>
 
 
-<style scoped>
+<style lang="scss" scoped>
 .page-container {
   background-color: #f0f0f0;
   min-height: 100vh;
@@ -224,6 +292,7 @@ export default {
   background-color: white;
   border-radius: 5px;
   padding: 1rem;
+  margin-bottom: 3rem;
 }
 
 .blue-border h2 {
@@ -269,25 +338,24 @@ export default {
   background-color: #f1f1f1;
 }
 
-.filter-button {
-  color: black;
+.filters-container {
   border: 1px solid;
   padding: 0.5rem 1rem;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
   margin-bottom: 0.5rem;
   margin-top: 2rem;
-  font-size: 16px;
   display: flex;
   gap: 0.7rem;
   border-radius: 10px;
   border-color: rgb(195, 195, 195);
-  transition: 0.2s ease-in-out;
-}
+  align-items: center;
+  width: 8rem;
 
-.filter-button:hover {
-  background-color: #e8e8e8;
-  transition: 0.2s ease-in-out;
+  .filters-text {
+    color: black;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+  }
+
 }
 
 .search-bar {
@@ -384,4 +452,59 @@ export default {
   color: white;
   transition: 0.2s ease-in-out;
 }
+
+.pagination {
+  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+
+.page-buttons {
+  display: flex;
+}
+
+.page-buttons button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  width: 2.8rem;
+  height: 2.8rem;
+}
+
+.page-buttons button.active {
+  background-color: #004187;
+}
+
+.page-buttons button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin: 10px 3px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination button:hover {
+  background-color: #007bffc1;
+}
+
+.pagination .next-button,
+.pagination .previous-button {
+  height: 2.8rem;
+  padding: 0rem 1rem;
+}
+
 </style>

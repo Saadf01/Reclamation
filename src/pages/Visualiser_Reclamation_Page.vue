@@ -5,7 +5,7 @@
             <h1>Réclamation</h1>
             <div class="action-buttons">
                 <button class="modify-button">Modifier</button>
-                <button class="dispatch-button">Dispatcher</button>
+                <button class="dispatch-button" @click="showPopup = true">Dispatcher</button>
                 <select class="status-dropdown">
                     <option value="" disabled selected>Choisissez un statut</option>
                     <option value="En cours de traitement">En cours de traitement</option>
@@ -22,7 +22,10 @@
 
         <div class="info_reclamation">
             <p id="reclamation"><strong>Réclamation :</strong> 906976</p>
-            <p id="statut"><strong>Statut :</strong> ....</p>
+            <div class="statut-container">
+                <strong>Statut :</strong>
+                <div class="div-statut" :style="getStatutStyle('Cloturée')"><span>Cloturée</span></div>
+            </div>
             <p id="description_statut"><strong>Description Statut :</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
         </div>
 
@@ -47,18 +50,53 @@
         <div class="sections">
             <Section_Historique></Section_Historique>
         </div>
+
+        <!-- Popup Component -->
+        <Popup_Dispatching v-if="showPopup" @close="showPopup = false" />
+
     </div>
 </template>
 
 <script setup>
-import Section_Donnees_Generales from '@/components/Section_Donnees_Generales.vue'
-import Section_Dates_Statuts from '@/components/Section_Dates_Statuts.vue'
-import Section_Donnees_Organisation from '@/components/Section_Donnees_Organisation.vue'
-import Section_Donnees_Techniques from '@/components/Section_Donnees_Techniques.vue'
-import Section_Pieces_Jointes from '@/components/Section_Pieces_Jointes.vue'
-import Section_Taches from '@/components/Section_Taches.vue'
-import Section_Historique from '@/components/Section_Historique.vue'
+
+import { ref } from 'vue';
+import Section_Donnees_Generales from '@/components/Section_Donnees_Generales.vue';
+import Section_Dates_Statuts from '@/components/Section_Dates_Statuts.vue';
+import Section_Donnees_Organisation from '@/components/Section_Donnees_Organisation.vue';
+import Section_Donnees_Techniques from '@/components/Section_Donnees_Techniques.vue';
+import Section_Pieces_Jointes from '@/components/Section_Pieces_Jointes.vue';
+import Section_Taches from '@/components/Section_Taches.vue';
+import Section_Historique from '@/components/Section_Historique.vue';
+import Popup_Dispatching from '@/components/Popup_Dispatching.vue';
+
+const showPopup = ref(false);
+
+const getStatutStyle = (statut) => {
+    let backgroundColor = '';
+    switch (statut) {
+        case 'Cloturée':
+        case 'Recours':
+        case 'Médiation':
+        case 'Contentieux':
+            backgroundColor = 'green';
+            break;
+        case 'En cours de traitement':
+        case 'Initiée':
+        case 'En réexamen':
+            backgroundColor = 'orange';
+            break;
+        case 'Erronée':
+            backgroundColor = 'red';
+            break;
+        default:
+            backgroundColor = 'white';
+    }
+    return {
+        backgroundColor,
+    };
+};
 </script>
+
 
 <style lang="scss" scoped>
 .page-container {
@@ -94,6 +132,11 @@ import Section_Historique from '@/components/Section_Historique.vue'
                 border: none;
                 color: white;
                 border-radius: 5px;
+                transition: 0.2s ease-in-out; 
+            }
+
+            .modify-button:hover {
+                background-color: #ffcc009d;
             }
 
             .dispatch-button {
@@ -101,6 +144,11 @@ import Section_Historique from '@/components/Section_Historique.vue'
                 border: none;
                 color: white;
                 border-radius: 5px;
+                transition: 0.2s ease-in-out; 
+            }
+
+            .dispatch-button:hover {
+                background-color: #00ccff95;
             }
 
             .status-dropdown {
@@ -114,6 +162,11 @@ import Section_Historique from '@/components/Section_Historique.vue'
                 border: none;
                 color: white;
                 border-radius: 5px;
+                transition: 0.2s ease-in-out; 
+            }
+
+            .validate-button:hover {
+                background-color: #00cc669c;
             }
         }
     }
@@ -131,6 +184,30 @@ import Section_Historique from '@/components/Section_Historique.vue'
                 font-weight: bold;
                 margin-right: 17px;
                 font-family: 'Poppins', sans-serif;
+            }
+        }
+
+        .statut-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+
+            strong {
+                font-family: 'Poppins', sans-serif;
+                font-size: 1.5rem;
+            }
+        }
+
+        .div-statut {
+            padding: 1rem 2rem;
+            color: white;
+            border-radius: 30px;
+
+            span {
+                font-family: 'Poppins', sans-serif;
+                font-size: 1.5rem;
             }
         }
 
