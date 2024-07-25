@@ -4,6 +4,105 @@
       <h1>Créer une réclamation</h1>
     </div>
     <form @submit.prevent="submitform">
+      <div class="blue-borders">
+        <h2>Données techniques</h2>
+        <div class="rec-detail">
+          <div class="input-box">
+            <label for="domaine" class="detail">Domaine concerné</label>
+            <select id="domaine" v-model="formState.domaine" @change="clearSortBy">
+              <option value="pid">PID</option>
+            </select>
+          </div>
+          <div class="input-box">
+            <label for="reception" class="detail">Réception B.O</label>
+            <select id="reception" v-model="formState.receptionBO" @change="clearSortBy">
+              <option value="Anciennes">Réclamations les plus anciennes</option>
+              <option value="Recentes">Réclamations les plus récentes</option>
+            </select>
+          </div>
+          <div class="input-box">
+            <label for="source" class="detail">Source réclamation</label>
+            <select id="source" v-model="formState.sourceReclamation" @change="clearSortBy">
+              <option value="Anciennes">Réclamations les plus anciennes</option>
+              <option value="Recentes">Réclamations les plus récentes</option>
+            </select>
+          </div>
+          <div class="input-box">
+            <label for="support" class="detail">Support de réclamation</label>
+            <select id="support" v-model="formState.supportReclamation" @change="clearSortBy">
+              <option value="Anciennes">Réclamations les plus anciennes</option>
+              <option value="Recentes">Réclamations les plus récentes</option>
+            </select>
+          </div>
+          <div class="input-box">
+            <label for="type" class="detail">Type réclamant</label>
+            <select id="type" v-model="formState.typeReclamant" @change="clearSortBy">
+              <option value="Anciennes">Client</option>
+              <option value="Anciennes">Fournisseur</option>
+              <option value="Anciennes">Ayant droit foncier</option>
+              <option value="Anciennes">Administration</option>
+              <option value="Anciennes">Societe civile</option>
+              <option value="Anciennes">Autre citoyen</option>
+            </select>
+          </div>
+        </div>
+      </div>  
+      <div class="blue-borders">
+        <h2>Données d'organisation</h2>
+        <div class="rec-detail">
+          <div class="input-box">
+            <label for="idrec" class="detail">Société</label>
+            <Multiselect
+              v-model="formState.societe"
+              :options="people"
+              label="name"
+              track-by="name"
+              placeholder="Sélectionner ou rechercher..."
+              :searchable="true"
+              :taggable="true"
+              :add-tag="addSocieteTag"
+              @select="onSocieteSelect"
+              class="custom-multiselect"
+
+            />
+            <p v-if="errorSociete" class="error-message">{{ errorSociete }}</p>
+          </div>
+          <div class="input-box">
+            <label for="idrec" class="detail">Agence commerciale</label>
+            <Multiselect
+              v-model="formState.agence"
+              :options="people"
+              label="name"
+              track-by="name"
+              placeholder="Sélectionner ou rechercher..."
+              :searchable="true"
+              :taggable="true"
+              :add-tag="addAgenceTag"
+              @select="onAgenceSelect"
+            />
+            <p v-if="errorAgence" class="error-message">{{ errorAgence }}</p>
+          </div>
+          <div class="input-box">
+            <label for="idrec" class="detail">Numéro du dossier médiateur</label>
+            <input type="text" id="idrec" v-model="formState.numeroDossier" required>
+          </div>
+          <div class="input-box">
+            <label for="idrec" class="detail">Destination de la réponse</label>
+            <Multiselect
+              v-model="formState.destinationReponse"
+              :options="people"
+              label="name"
+              track-by="name"
+              placeholder="Sélectionner ou rechercher..."
+              :searchable="true"
+              :taggable="true"
+              :add-tag="addDestinationTag"
+              @select="onDestinationSelect"
+            />
+            <p v-if="errorDestination" class="error-message">{{ errorDestination }}</p>
+          </div>
+        </div>
+      </div>
       <!-- Section Information réclamant -->
       <div class="blue-borders">
         <h2>Données générales</h2>
@@ -11,29 +110,50 @@
           <div class="input-box">
             <label for="idrec" class="detail">Réclamant</label>
             <div class="input-with-icon">
-              <input type="text" id="idrec" name="idrec" v-model="formState.reclamant"  @click="openModal('reclamant')" required>
-              <span class="search-icon" @click="openModal('reclamant')">
-                <font-awesome-icon :icon="['fas', 'search']" />
-              </span>
+              <Multiselect
+                v-model="formState.reclamant"
+                :options="filteredReclamants"
+                label="name"
+                track-by="id"
+                placeholder="Sélectionner ou rechercher..."
+                @input="onReclamantInput"
+                :searchable="true"
+              />
+              <font-awesome-icon icon="plus" class="icon" @click="redirectToNewReclamant" />
             </div>
+            <p v-if="errorReclamant" class="error-message">{{ errorReclamant }}</p>
           </div>
           <div class="input-box">
             <label for="respo" class="detail">Responsable</label>
             <div class="input-with-icon">
-              <input type="text" id="respo" name="respo" v-model="formState.responsable" @click="openModal('responsable')">
-              <span class="search-icon" @click="openModal('responsable')">
-                <font-awesome-icon :icon="['fas', 'search']" />
-              </span>
+              <Multiselect
+                v-model="formState.responsable"
+                :options="filteredResponsables"
+                label="name"
+                track-by="id"
+                placeholder="Sélectionner ou rechercher..."
+                @input="onResponsableInput"
+                :searchable="true"
+              />
+              <font-awesome-icon icon="plus" class="icon" @click="redirectToNewResponsable" />
             </div>
+            <p v-if="errorResponsable" class="error-message">{{ errorResponsable }}</p>
           </div>
           <div class="input-box">
             <label for="id-op" class="detail">Opération</label>
             <div class="input-with-icon">
-              <input type="text" id="id-op" name="id-op" v-model="formState.operation" @click="openModal('operation')" required>
-              <span class="search-icon" @click="openModal('operation')">
-                <font-awesome-icon :icon="['fas', 'search']" />
-              </span>
+              <Multiselect
+                v-model="formState.operation"
+                :options="filteredOperations"
+                label="description"
+                track-by="code"
+                placeholder="Sélectionner ou rechercher..."
+                @input="onOperationInput"
+                :searchable="true"
+              />
+              <font-awesome-icon icon="plus" class="icon" @click="redirectToNewOperation" />
             </div>
+            <p v-if="errorOperation" class="error-message">{{ errorOperation }}</p>
           </div>
           <div class="input-box">
             <label for="relai" class="detail">Identification du relais réclamation</label>
@@ -61,138 +181,47 @@
           </div>
           <div class="input-box">
             <label for="textarea2" class="detail">Dispositions particulieres</label>
-            <textarea id="textarea2" name="textarea2" v-model="formState.textarea2"></textarea>
+            <textarea id="textarea2" name="textarea2"></textarea>
           </div>
           <div class="input-box">
             <label for="textarea3" class="detail">Commentaire</label>
-            <textarea id="textarea3" name="textarea3" v-model="formState.textarea3"></textarea>
+            <textarea id="textarea3" name="textarea3"></textarea>
           </div>
         </div>
       </div>
 
       <!-- Section Données techniques -->
-      <div class="blue-borders">
-        <h2>Données techniques</h2>
-        <div class="rec-detail">
-          <div class="input-box">
-            <label for="domaine" class="detail">Domaine concerné</label>
-            <select id="domaine" v-model="formState.domaine" @change="clearSortBy">
-              <option value="pid">PID</option>
-            </select>
-          </div>
-          <div class="input-box">
-            <label for="reception" class="detail">Réception B.O</label>
-            <select id="reception" v-model="formState.receptionBO" @change="clearSortBy">
-              <option value="Anciennes">Réclamations les plus anciennes</option>
-              <option value="Recentes">Réclamations les plus récentes</option>
-            </select>
-          </div>
-          <div class="input-box">
-            <label for="source" class="detail">Source réclamation</label>
-            <select id="source" v-model="sourceReclamation" @change="clearSortBy">
-              <option value="Anciennes">Réclamations les plus anciennes</option>
-              <option value="Recentes">Réclamations les plus récentes</option>
-            </select>
-          </div>
-          <div class="input-box">
-            <label for="support" class="detail">Support de réclamation</label>
-            <select id="support" v-model="supportReclamation" @change="clearSortBy">
-              <option value="Anciennes">Réclamations les plus anciennes</option>
-              <option value="Recentes">Réclamations les plus récentes</option>
-            </select>
-          </div>
-          <div class="input-box">
-            <label for="type" class="detail">Type réclamant</label>
-            <select id="type" v-model="typeReclamant" @change="clearSortBy">
-              <option value="Anciennes">Réclamations les plus anciennes</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="blue-borders">
-        <h2>Données d'organisation</h2>
-        <div class="rec-detail">
-          <div class="input-box">
-            <label for="idrec" class="detail">Societé</label>
-            <div class="input-with-icon">
-              <input type="text" id="idrec" name="idrec" v-model="formState.reclamant"  @click="openModal('reclamant')" required>
-              <span class="search-icon" @click="openModal('reclamant')">
-                <font-awesome-icon :icon="['fas', 'search']" />
-              </span>
-            </div>
-          </div>
-          <div class="input-box">
-            <label for="idrec" class="detail">Agence commerciale</label>
-            <div class="input-with-icon">
-              <input type="text" id="idrec" name="idrec" v-model="formState.reclamant"  @click="openModal('reclamant')" required>
-              <span class="search-icon" @click="openModal('reclamant')">
-                <font-awesome-icon :icon="['fas', 'search']" />
-              </span>
-            </div>
-          </div>
-          <div class="input-box">
-            <label for="idrec" class="detail">Numero du dossier mediateur</label>
-              <input type="text" id="idrec" required>
-            </div>
-          
-          <div class="input-box">
-            <label for="idrec" class="detail">Destination de la reponse</label>
-            <div class="input-with-icon">
-              <input type="text" id="idrec" name="idrec" v-model="formState.reclamant"  @click="openModal('reclamant')" required>
-              <span class="search-icon" @click="openModal('reclamant')">
-                <font-awesome-icon :icon="['fas', 'search']" />
-              </span>
-            </div>
-          </div>
-      </div>
-      </div>
+      
+      
+
+
       <!-- Section traitement reclamation -->
       <div class="blue-borders">
         <h2>Détail traitement réclamation</h2>
         <div class="rec-detail">
           <div class="input-box">
             <label for="disp" class="detail">Tâche</label>
-            <input type="text" id="disp" v-model="tache">
+            <input type="text" id="disp" v-model="formState.tache">
           </div>
           <div class="input-box">
             <label for="resp-tach" class="detail">Téléphone du responsable de la tâche</label>
-            <input type="text" id="resp-tach" v-model="telephoneResponsableTache">
+            <input type="text" id="resp-tach" v-model="formState.telephoneResponsableTache">
           </div>
           <div class="input-box">
-            <label for="hao" class="detail">Centre de traitement HAO</label>
+            <label for="hao" class="detail">Entite</label>
             <select id="hao" v-model="formState.centreTraitementhao" @change="clearSortBy">
               <option value="pid">PID</option>
-              <option value="pid">PID</option>
+            </select>
+          </div>
+          <div class="input-box">
+            <label for="dao" class="detail">Centre de traitement DAO</label>
+            <select id="dao" v-model="formState.centreTraitementdao" @change="clearSortBy">
               <option value="pid">PID</option>
             </select>
           </div>
           <div class="input-box">
-            <label for="sao" class="detail">Centre de traitement SAO</label>
-            <select id="sao" v-model="formState.centreTraitementsao" @change="clearSortBy">
-              <option value="pid">PID</option>
-              <option value="pid">PID</option>
-              <option value="pid">PID</option>
-            </select>
-          </div>
-          <div class="input-box">
-            <label for="date_debut" class="detail">Date debut</label>
-            <input type="date" id="date_debut" name="date_debut" v-model="formState.datedebut">
-          </div>
-          <div class="input-box">
-            <label for="date_fin" class="detail">Date fin</label>
-            <input type="date" id="date_fin" name="date_fin" v-model="formState.datefin">
-          </div>
-          <div class="input-box">
-            <label for="imp" class="detail">Importance</label>
-            <select id="imp" v-model="formState.importance" @change="clearSortBy">
-              <option value="pid">Haute</option>
-              <option value="pid">Moyenne</option>
-              <option value="pid">Faible</option>
-            </select>
-          </div>
-          <div class="input-box">
-            <label for="avancement" class="detail">Avancement</label>
-            <input type="text" id="avancement" name="avancement" v-model="formState.avancement">
+            <label for="relai" class="detail">Numéro de relais réclamation</label>
+            <input type="text" id="relai" v-model="formState.numeroRelais">
           </div>
         </div>
       </div>
@@ -209,51 +238,7 @@
           </div>
         </div>
       </div>
-      <!-- Fenêtre modale pour la sélection de réclamant, responsable et opération -->
-      <div v-if="showModal || showModalResponsable || showModalOperation" class="modal">
-        <div class="modal-content">
-          <template v-if="showModal">
-            <h3>Sélectionner un {{ modalType }}</h3>
-            <input type="text" v-model="searchQuery" placeholder="Rechercher..." class="modal-input">
-            <ul>
-              <li v-for="person in filteredPeople" :key="person.id" @click="selectPerson(person)" class="modal-item">
-                <span v-if="modalType === 'reclamant'">{{ person.cin }}</span>
-                <span v-if="modalType === 'responsable'">{{ person.matricule }}</span>
-                <span>{{ person.name }}</span>
-              </li>
-            </ul>
-            <button @click="closeModal" class="modal-button">Fermer</button>
-            <button @click="redirectToCreate" class="modal-button modal-button-new">Nouveau</button>
-          </template>
-          <template v-if="showModalResponsable">
-            <h3>Sélectionner un {{ modalTypeResponsable }}</h3>
-            <input type="text" v-model="searchQueryResponsable" placeholder="Rechercher..." class="modal-input">
-            <ul>
-              <li v-for="person in filteredPeople" :key="person.id" @click="selectPerson(person, 'responsable')" class="modal-item">
-                <span>{{ person.cin }}</span>
-                <span>{{ person.name }}</span>
-              </li>
-            </ul>
-            <button @click="closeModalResponsable" class="modal-button">Fermer</button>
-            <button @click="redirectToCreate('responsable')" class="modal-button modal-button-new">Nouveau</button>
-          </template>
-          <template v-if="showModalOperation">
-            <h3>Sélectionner une Opération</h3>
-            <input type="text" v-model="searchOperationQuery" placeholder="Rechercher..." class="modal-input">
-            <ul>
-              <li v-for="op in filteredOperations" :key="op.code" @click="selectOperation(op)" class="modal-item">
-                <span class="modal-item-code">{{ op.code }}</span>
-                <span class="modal-item-description">{{ op.description }}</span>
-              </li>
-            </ul>
-            <button @click="closeModalOperation" class="modal-button">Fermer</button>
-            <button @click="redirectToCreateOperation" class="modal-button modal-button-new">Nouveau</button>
-          </template>
-        </div>
-      </div>
- <!-- Section de Dispatching avec transition -->
-  <!-- Section de Dispatching avec transition -->
-  <transition name="fade">
+      <transition name="fade">
         <div v-if="showDispatchSection" class="blue-borders">
           <h2>Dispatching</h2>
           <div class="rec-detail">
@@ -281,9 +266,7 @@
           </div>
         </div>
       </transition>
-       <!-- Boutons alignés horizontalement -->
-       <!-- Boutons alignés horizontalement -->
-       <div class="button-container">
+      <div class="button-container">
         <button id="transferButton" type="button" class="button-submit" @click="toggleTransferSection">
           {{ cancelTransferText }}
         </button>
@@ -294,92 +277,61 @@
 </template>
 
 <script>
+import Multiselect from '@vueform/multiselect'
+import '@vueform/multiselect/themes/default.css'
 import { formState } from '@/Save';
 
 export default {
+  components: {
+    Multiselect
+  },
   data() {
     return {
       formState,
-      showModal: false,
-      modalType: '', // 'reclamant' ou 'responsable' ou 'operation'
       people: [
         { id: 1, cin: '12345678', name: 'John Doe' },
         { id: 2, cin: '87654321', name: 'Jane Smith' },
         { id: 3, cin: '98765432', name: 'Alice Johnson' }
       ],
-      showModalResponsable: false,
-      modalTypeResponsable: '',
-      showModalOperation: false,
-      modalTypeOperation: '',
       operations: [
         { code: 'OP001', description: 'Opération 1' },
         { code: 'OP002', description: 'Opération 2' },
         { code: 'OP003', description: 'Opération 3' }
       ],
-      selectedOperation: null,
       searchQuery: '',
       searchQueryResponsable: '',
       searchOperationQuery: '',
+      errorReclamant: '',
+      errorResponsable: '',
+      errorOperation: '',
       showDispatchSection: false,
-      cancelTransferText: 'Transferer',
+      cancelTransferText: 'Transferer'
     };
   },
+  computed: {
+    filteredReclamants() {
+      const query = this.searchQuery ? this.searchQuery.toLowerCase() : '';
+      return this.people.filter(person =>
+        person.name.toLowerCase().includes(query) ||
+        person.cin.includes(query)
+      );
+    },
+    filteredResponsables() {
+      const query = this.searchQueryResponsable ? this.searchQueryResponsable.toLowerCase() : '';
+      return this.people.filter(person =>
+        person.name.toLowerCase().includes(query) ||
+        person.cin.includes(query)
+      );
+    },
+    filteredOperations() {
+      const query = this.searchOperationQuery ? this.searchOperationQuery.toLowerCase() : '';
+      return this.operations.filter(op =>
+        op.code.toLowerCase().includes(query) ||
+        op.description.toLowerCase().includes(query)
+      );
+    }
+  },
   methods: {
-    openModal(type) {
-      if (type === 'reclamant') {
-        this.modalType = 'reclamant';
-        this.showModal = true;
-      } else if (type === 'responsable') {
-        this.modalTypeResponsable = 'responsable';
-        this.showModalResponsable = true;
-      } else if (type === 'operation') {
-        this.modalTypeOperation = 'operation';
-        this.showModalOperation = true;
-      }
-    },
-    closeModal() {
-      this.showModal = false;
-      this.searchQuery = '';
-    },
-    closeModalResponsable() {
-      this.showModalResponsable = false;
-      this.searchQueryResponsable = '';
-    },
-    closeModalOperation() {
-      this.showModalOperation = false;
-      this.searchOperationQuery = '';
-    },
-    toggleTransferSection() {
-      this.showDispatchSection = !this.showDispatchSection;
-      if (this.showDispatchSection) {
-        this.cancelTransferText = 'Annuler transfert';
-      } else {
-        this.cancelTransferText = 'Transferer';
-      }
-    },
-    selectPerson(person, type) {
-      if (type === 'responsable') {
-        this.formState.responsable = person.name;
-      } else {
-        this.formState.reclamant = person.name;
-      }
-      this.closeModal();
-      this.closeModalResponsable();
-    },
-    selectOperation(op) {
-      this.selectedOperation = op;
-      this.formState.operation = op.description;
-      this.closeModalOperation();
-    },
-    redirectToCreate(type) {
-      if (type === 'responsable') {
-        this.$router.push('/ResponsablePage');
-        this.closeModalResponsable();
-      } else {
-        this.$router.push('/ReclamantPage');
-        this.closeModal();
-      }
-    },
     handleFileUpload(event) {
       const file = event.target.files[0];
       console.log('PDF File uploaded:', file);
@@ -393,29 +345,41 @@ export default {
     triggerFileInput(refName) {
       this.$refs[refName].click();
     },
-    redirectToCreateOperation() {
-      this.$router.push('/OperationPage');
-      this.closeModalOperation();
+    toggleTransferSection() {
+      this.showDispatchSection = !this.showDispatchSection;
+      if (this.showDispatchSection) {
+        this.cancelTransferText = 'Annuler transfert';
+      } else {
+        this.cancelTransferText = 'Transferer';
+      }
     },
-    clearSortBy() {
-      // Logique de réinitialisation des filtres si nécessaire
+    onReclamantInput(value) {
+      this.searchQuery = value;
+      this.errorReclamant = '';
     },
-  },
-  computed: {
-    filteredPeople() {
-      const query = this.searchQuery ? this.searchQuery.toLowerCase() : '';
-      return this.people.filter(person =>
-        person.name.toLowerCase().includes(query) ||
-        person.cin.includes(query)
-      );
+    onResponsableInput(value) {
+      this.searchQueryResponsable = value;
+      this.errorResponsable = '';
     },
-    filteredOperations() {
-      const query = this.searchOperationQuery ? this.searchOperationQuery.toLowerCase() : '';
-      return this.operations.filter(op =>
-        op.code.toLowerCase().includes(query) ||
-        op.description.toLowerCase().includes(query)
-      );
+    onOperationInput(value) {
+      this.searchOperationQuery = value;
+      this.errorOperation = '';
     },
-  },
+    redirectToNewReclamant() {
+      this.$router.push('/ReclamantPage'); // Adjust the route as needed
+    },
+    redirectToNewResponsable() {
+      this.$router.push('/ResponsablePage'); // Adjust the route as needed
+    },
+    redirectToNewOperation() {
+      this.$router.push('/OperationPage'); // Adjust the route as needed
+    },
+    submitform() {
+      // Logic for form submission
+      if (!this.errorReclamant && !this.errorResponsable && !this.errorOperation) {
+        // Process form submission
+      }
+    }
+  }
 };
 </script>

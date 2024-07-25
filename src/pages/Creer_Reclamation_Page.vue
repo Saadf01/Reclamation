@@ -272,14 +272,7 @@ select {
   padding-right: 40px;
 }
 
-.search-icon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: #0d0d0e;
-}
+
 .file-input-box {
   position: relative;
 }
@@ -299,5 +292,21 @@ select {
 
 .custom-file-input:hover {
   background-color: #e0e0e0;
+}
+.error-message {
+  color: red;
+  font-size: 0.875rem;
+}
+.input-with-icon {
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon .icon {
+  margin-left: 8px;
+  cursor: pointer;
+}
+.multiselect__option--highlight:after {
+  background-color: lightblue ; /* Change this color to the desired one */
 }
 </style>

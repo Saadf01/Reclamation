@@ -2,7 +2,7 @@
 import { reactive } from 'vue';
 
 export const formState = reactive({
-  reclamant: '',
+  reclamant: undefined,
   responsable: '',
   operation: '',
   identificationRelais: '',
