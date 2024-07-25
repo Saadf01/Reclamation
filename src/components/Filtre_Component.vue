@@ -97,6 +97,7 @@ export default {
       dropdownVisible: null, // Pour gérer la visibilité de la div flottante
       filterOptions: {
         societe: [
+          { name: 'Holding Al Omrane' },
           { name: 'Al Omrane Tanger-Tétouan-Al Hoceïma' },
           { name: 'Al Omrane Casablanca - Settat' },
           { name: 'Al Omrane Fès Meknès' },
@@ -105,7 +106,8 @@ export default {
           { name: 'Al Omrane Marrakech Safi' },
           { name: 'Al Omrane Souss Massa' },
           { name: 'Al Omrane Al Janoub' },
-          { name: 'Al Omrane Beni Mellal Khenifra' }
+          { name: 'Al Omrane Beni Mellal Khenifra' },
+          { name: 'Al Omrane Rabat-Salé-Kénitra' }
         ],
         domaine: [
           { name: 'Relation avec l\'agent d\'accueil' },

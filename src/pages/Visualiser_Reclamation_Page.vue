@@ -5,7 +5,7 @@
             <h1>Réclamation</h1>
             <div class="action-buttons">
                 <button class="modify-button">Modifier</button>
-                <button class="dispatch-button">Dispatcher</button>
+                <button class="dispatch-button" @click="showPopup = true">Dispatcher</button>
                 <select class="status-dropdown">
                     <option value="" disabled selected>Choisissez un statut</option>
                     <option value="En cours de traitement">En cours de traitement</option>
@@ -50,10 +50,16 @@
         <div class="sections">
             <Section_Historique></Section_Historique>
         </div>
+
+        <!-- Popup Component -->
+        <Popup_Dispatching v-if="showPopup" @close="showPopup = false" />
+
     </div>
 </template>
 
 <script setup>
+
+import { ref } from 'vue';
 import Section_Donnees_Generales from '@/components/Section_Donnees_Generales.vue';
 import Section_Dates_Statuts from '@/components/Section_Dates_Statuts.vue';
 import Section_Donnees_Organisation from '@/components/Section_Donnees_Organisation.vue';
@@ -61,6 +67,9 @@ import Section_Donnees_Techniques from '@/components/Section_Donnees_Techniques.
 import Section_Pieces_Jointes from '@/components/Section_Pieces_Jointes.vue';
 import Section_Taches from '@/components/Section_Taches.vue';
 import Section_Historique from '@/components/Section_Historique.vue';
+import Popup_Dispatching from '@/components/Popup_Dispatching.vue';
+
+const showPopup = ref(false);
 
 const getStatutStyle = (statut) => {
     let backgroundColor = '';
@@ -123,6 +132,11 @@ const getStatutStyle = (statut) => {
                 border: none;
                 color: white;
                 border-radius: 5px;
+                transition: 0.2s ease-in-out; 
+            }
+
+            .modify-button:hover {
+                background-color: #ffcc009d;
             }
 
             .dispatch-button {
@@ -130,6 +144,11 @@ const getStatutStyle = (statut) => {
                 border: none;
                 color: white;
                 border-radius: 5px;
+                transition: 0.2s ease-in-out; 
+            }
+
+            .dispatch-button:hover {
+                background-color: #00ccff95;
             }
 
             .status-dropdown {
@@ -143,6 +162,11 @@ const getStatutStyle = (statut) => {
                 border: none;
                 color: white;
                 border-radius: 5px;
+                transition: 0.2s ease-in-out; 
+            }
+
+            .validate-button:hover {
+                background-color: #00cc669c;
             }
         }
     }
