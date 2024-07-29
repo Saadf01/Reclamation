@@ -201,7 +201,7 @@ const getStatutStyle = (statut) => {
         }
 
         .div-statut {
-            padding: 1rem 2rem;
+            padding: 0.7rem 1.5rem;
             color: white;
             border-radius: 30px;
 

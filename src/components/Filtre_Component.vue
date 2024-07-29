@@ -33,19 +33,19 @@
     </div>
 
     <!-- Sections de filtres pour les dates -->
-    <div class="filter-section">
+    <div class="filter-section" v-if="filters.type_date">
       <div class="filter-label">
         <span class="material-icons">today</span>
-        <label>Date de réception (A partir du ...)</label>
+        <label>Date de début</label>
       </div>
-      <input type="date" v-model="filters.date_reception" @change="applyFilters">
+      <input type="date" v-model="filters.date_start" @change="applyFilters">
     </div>
-    <div class="filter-section">
+    <div class="filter-section" v-if="filters.type_date">
       <div class="filter-label">
         <span class="material-icons">today</span>
-        <label>Date de déclaration (A partir du ...)</label>
+        <label>Date de fin</label>
       </div>
-      <input type="date" v-model="filters.date_declaration" @change="applyFilters">
+      <input type="date" v-model="filters.date_end" @change="applyFilters">
     </div>
   </div>
 
@@ -91,8 +91,9 @@ export default {
         support: [],
         statut: [],
         reception_bo: [],
-        date_declaration: '',
-        date_reception: ''
+        type_date: [],
+        date_start: '',
+        date_end: ''
       },
       dropdownVisible: null, // Pour gérer la visibilité de la div flottante
       filterOptions: {
@@ -158,6 +159,11 @@ export default {
           { name: 'Contentieux' },
           { name: 'En réexamen' },
           { name: 'Erronée' }
+        ],
+        type_date: [
+          { name: 'Date de création'},
+          { name: 'Date de récéption'},
+          { name: 'Date de déclaration'}
         ]
       },
       filterIcons: {
@@ -167,8 +173,9 @@ export default {
         source: 'source',
         support: 'mail',
         statut: 'task',
-        date_declaration: 'today',
-        date_reception: 'today'
+        type_date: 'today',
+        date_start: 'today',
+        daye_end: 'today'
       },
       filterLabels: {
         societe: 'Société',
@@ -177,8 +184,7 @@ export default {
         source: 'Source',
         support: 'Support',
         statut: 'Statut',
-        date_declaration: 'Date de déclaration',
-        date_reception: 'Date de réception'
+        type_date: 'Type de date'
       }
     };
   },
@@ -208,8 +214,7 @@ export default {
         support: [],
         statut: [],
         reception_bo: [],
-        date_declaration: '',
-        date_reception: ''
+        type_date: [],
       };
       this.$emit('reset-filters');
     },
@@ -254,23 +259,22 @@ export default {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  padding: 1rem;
+  padding: 0.3rem;
 }
 
 .selected-filters {
-  margin-bottom: 1rem;
   padding: 1rem;
-
 }
 
 .selected-filter-group {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.2rem;
 }
 
 .selected-filter-label {
   display: flex;
   align-items: center;
   margin-bottom: 0.5rem;
+  gap: 5px;
 }
 
 .selected-filter-label .material-icons {
@@ -279,12 +283,14 @@ export default {
 
 .selected-filter-label label {
   font-family: 'Poppins', sans-serif;
+  font-size: 14px;
 }
 
 .selected-filter-items {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  font-size: 13px;
 }
 
 .selected-filter-item {
@@ -309,9 +315,8 @@ export default {
 }
 
 .filter-section {
-  flex: 1 1 30%;
+  flex: 1 1 18%;
   min-width: 200px;
-  padding-bottom: 1rem;
   position: relative;
   transition: 0.2s ease-out;
 }
@@ -324,10 +329,12 @@ export default {
 
 .filter-label .material-icons {
   color: rgb(30, 72, 197);
+  font-size: 18px;
 }
 
 .filter-label label {
   font-family: 'Poppins', sans-serif;
+  font-size: 14px;
 }
 
 .filter-toggle {
@@ -336,6 +343,7 @@ export default {
   padding: 0.5rem;
   border: 1px solid #ddd;
   background-color: #fff;
+  font-size: 14px;
 }
 
 .filter-dropdown {
@@ -354,17 +362,21 @@ export default {
   margin-right: 0.5rem;
 }
 
+.filter-dropdown label {
+  font-size: 13px;
+}
+
 .filter-foot {
   display: flex;
-  justify-content: left;
+  justify-content: right;
   width: 100%;
   margin-bottom: 2rem;
 }
 
 .filter-foot .effacer {
-  padding: 0.7rem 1.5rem;
+  padding: 6px 10px;
   font-family: 'Poppins', sans-serif;
-  font-size: 1rem;
+  font-size: 14px;
   border-radius: 0.5rem;
   border: 1px solid red;
   color: red;
@@ -392,7 +404,7 @@ export default {
 .filter-section input[type="date"] {
   cursor: pointer;
   border: 1px solid #ddd;
-  padding: 0.5rem 1rem;
+  padding: 0.325rem 1rem;
   font-family: 'Poppins', sans-serif;
   width: 100%;
 }

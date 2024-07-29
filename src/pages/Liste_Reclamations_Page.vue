@@ -7,18 +7,18 @@
     <div class="blue-border">
       <h2>Rechercher une réclamation</h2>
 
-      <div class="filters-container">
-        <span class="material-icons">tune</span>
-        <span class="filters-text">Filtres</span>
-      </div> 
+      <!-- Barre de recherche -->
+       <div class="search-div">
+        <input v-model="searchQuery" type="text" placeholder="Rechercher..." class="search-bar">
+       </div>
+      
 
       <div class="filter">
         <!-- Composant Filtre -->
         <FiltreComponent :isVisible="isFilterSidebarVisible" @toggle-sidebar="toggleFilterSidebar" @reset-filters="resetFilters" @apply-filters="applyFilters" />
       </div>
 
-      <!-- Barre de recherche -->
-      <input v-model="searchQuery" type="text" placeholder="Rechercher..." class="search-bar">
+
 
       <!-- Tableau des réclamations -->
       <table class="styled-table">
@@ -74,6 +74,16 @@
                       <span class="text">Modifier</span>
                     </router-link>
                   </li>
+                  <li>
+                    <router-link :to="`/`" class="button">
+                      <span class="text">Dispatcher</span>
+                    </router-link>
+                  </li>
+                  <li>
+                    <router-link :to="`/`" class="button">
+                      <span class="text">Tâches</span>
+                    </router-link>
+                  </li>
                 </ul>
               </div>
             </td>
@@ -95,7 +105,15 @@
           </button>
         </div>
         <button class="next-button" @click="nextPage" :disabled="currentPage === totalPages">Suivant</button>
+        <div class="items-per-page-selector">
+          <span>Afficher</span>
+          <select v-model="itemsPerPage" @change="currentPage = 1">
+            <option v-for="option in [10, 15, 20, 25, 30]" :key="option" :value="option">{{ option }}</option>
+          </select>
+          <span>réclamations par page</span>
+        </div>
       </div>
+
 
 
     </div>
@@ -124,14 +142,16 @@ export default {
         support: [],
         statut: [],
         reception_bo: [],
-        date_declaration: '',
-        date_reception: ''
+        date_reception_start: '',
+        date_reception_end: '',
+        date_declaration_start: '',
+        date_declaration_end: ''
       },
       reclamations: [
         // Exemple de données ; remplacez par des données réelles
         { id_reclamation: '1', societe: 'Al Omrane Casablanca - Settat', responsable: 'Responsable 1', reclamant: 'Reclamant 1', objet: 'Objet 1', domaine: 'Autre', source: 'Réclamant', operation: 'ANNASSIM', reception_bo: 'SAO', support: 'Courrier', date_reception: '2023-01-01', date_declaration: '2023-01-02', statut: 'En cours de traitement' },
         { id_reclamation: '1', societe: 'Al Omrane Casablanca - Settat', responsable: 'Responsable 1', reclamant: 'Reclamant 1', objet: 'Objet 1', domaine: 'Autre', source: 'Réclamant', operation: 'ANNASSIM', reception_bo: 'SAO', support: 'Courrier', date_reception: '2023-01-01', date_declaration: '2023-01-02', statut: 'En cours de traitement' },
-        { id_reclamation: '1', societe: 'Al Omrane Casablanca - Settat', responsable: 'Responsable 1', reclamant: 'Reclamant 1', objet: 'Objet 1', domaine: 'Autre', source: 'Réclamant', operation: 'ANNASSIM', reception_bo: 'SAO', support: 'Courrier', date_reception: '2023-01-01', date_declaration: '2023-01-02', statut: 'En cours de traitement' },
+        { id_reclamation: '1', societe: 'Al Omrane Casablanca - Settat', responsable: 'Responsable 1', reclamant: 'Reclamant 1', objet: 'Objet 1', domaine: 'Autre', source: 'Réclamant', operation: 'ANNASSIM', reception_bo: 'SAO', support: 'Courrier', date_reception: '2023-01-01', date_declaration: '2023-01-02', statut: 'En cours de traitement' }, 
         { id_reclamation: '2', societe: 'Al Omrane Fès Meknès', responsable: 'Responsable 2', reclamant: 'Reclamant 2', objet: 'Objet 2', domaine: 'Accueil - Renseignements', source: 'Administration', operation: 'ANNASSIM', reception_bo: 'HAO', support: 'Site Web', date_reception: '2023-02-01', date_declaration: '2023-02-02', statut: 'Cloturée' },
       ],
       currentPage: 1,
@@ -178,23 +198,27 @@ export default {
     },
     getPageButtons() {
       const totalPages = this.totalPages;
-      const pageButtons = [];
-      const maxButtons = 10;
-      const half = Math.floor(maxButtons / 2);
+      const currentPage = this.currentPage;
+      const range = 5; // Numéro de page affiché avant et après la page actuelle
 
-      let start = Math.max(this.currentPage - half, 1);
-      let end = Math.min(start + maxButtons - 1, totalPages);
+      let startPage = Math.max(currentPage - range, 1);
+      let endPage = Math.min(currentPage + range, totalPages);
 
-      if (end - start < maxButtons - 1) {
-        start = Math.max(end - maxButtons + 1, 1);
+      // Ajustement si le nombre de pages est inférieur à 2*range + 1
+      if (endPage - startPage < 2 * range) {
+        if (startPage === 1) {
+          endPage = Math.min(startPage + 2 * range, totalPages);
+        } else if (endPage === totalPages) {
+          startPage = Math.max(endPage - 2 * range, 1);
+        }
       }
 
-      for (let i = start; i <= end; i++) {
-        pageButtons.push(i);
+      const pages = [];
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
       }
-
-      return pageButtons;
-    }
+      return pages;
+    },
   },
   methods: {
     toggleFilterSidebar() {
@@ -220,8 +244,10 @@ export default {
         support: [],
         statut: [],
         reception_bo: [],
-        date_declaration: '',
-        date_reception: ''
+        date_reception_start: '',
+        date_reception_end: '',
+        date_declaration_start: '',
+        date_declaration_end: ''
       };
     },
     applyFilters(filters) {
@@ -262,7 +288,10 @@ export default {
     },
     setPage(page) {
     this.currentPage = page;
-  }
+    },
+    updateItemsPerPage() {
+      this.currentPage = 1; // Reset to the first page
+    }
   }
 };
 </script>
@@ -288,7 +317,7 @@ export default {
 
 .blue-border {
   border-top: 4px solid rgb(0, 147, 215);
-  margin-top: 2rem;
+  margin-top: 1rem;
   background-color: white;
   border-radius: 5px;
   padding: 1rem;
@@ -298,14 +327,14 @@ export default {
 .blue-border h2 {
   font-size: 1.15rem;
   font-family: 'Poppins', sans-serif;
-  padding: 0.5rem 1rem;
+  padding: 0.2rem 1rem;
 }
 
 .styled-table {
   width: 100%;
   border-collapse: collapse;
   margin: 1rem 0;
-  font-size: 0.9rem;
+  font-size: 13px;
   font-family: 'Poppins', sans-serif;
 }
 
@@ -319,14 +348,14 @@ export default {
   font-weight: bold;
   padding: 0.625rem;
   border: 1px solid #ddd;
-  font-size: 1rem;
+  font-size: 14px;
   cursor: pointer;
 }
 
 
 .styled-table th .material-icons {
   vertical-align: middle;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .styled-table td {
@@ -360,9 +389,10 @@ export default {
 
 .search-bar {
   width: 30rem;
-  padding: 0.7rem;
-  margin: 1rem 0;
-  font-size: 1rem;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  margin-left: 0.3rem;
+  font-size: 14px;
   border: 1px solid #ddd;
   border-radius: 5px;
 }
@@ -505,6 +535,32 @@ export default {
 .pagination .previous-button {
   height: 2.8rem;
   padding: 0rem 1rem;
+}
+
+.items-per-page-selector {
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.items-per-page-selector select {
+  padding: 0.3rem;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+}
+
+.items-per-page-selector select:focus {
+  border-color: rgb(0, 131, 212);
+}
+
+.items-per-page-selector span {
+  font-size: 14px;
 }
 
 </style>
