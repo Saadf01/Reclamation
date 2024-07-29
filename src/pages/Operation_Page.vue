@@ -19,10 +19,22 @@
             <input type="text" id="ville" name="ville" required>
           </div>
           </div>
-          <div class="button">
-        <input type="submit" value="Enregistrer">
+          <div class="button-container">
+        <button id="transferButton" type="button" class="button-submit" @click="redirectToCreation">
+          Annuler
+        </button>
+        <input type="submit" value="Enregistrer" class="button-submit">
       </div>
           </form>
           </div>
           
 </template>
+<script>
+export default{
+    methods: {
+      redirectToCreation(){
+      this.$router.push('/CreerReclamation');
+    }
+    }
+}
+</script>
