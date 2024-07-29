@@ -14,6 +14,41 @@
         </div>
         
     </div>
+     <!-- Section Données techniques -->
+      
+      
+
+
+      <!-- Section traitement reclamation 
+      <div class="blue-borders">
+        <h2>Détail traitement réclamation</h2>
+        <div class="rec-detail">
+          <div class="input-box">
+            <label for="disp" class="detail">Tâche</label>
+            <input type="text" id="disp" v-model="formState.tache">
+          </div>
+          <div class="input-box">
+            <label for="resp-tach" class="detail">Téléphone du responsable de la tâche</label>
+            <input type="text" id="resp-tach" v-model="formState.telephoneResponsableTache">
+          </div>
+          <div class="input-box">
+            <label for="hao" class="detail">Entite</label>
+            <select id="hao" v-model="formState.centreTraitementhao" @change="clearSortBy">
+              <option value="pid">PID</option>
+            </select>
+          </div>
+          <div class="input-box">
+            <label for="dao" class="detail">Centre de traitement DAO</label>
+            <select id="dao" v-model="formState.centreTraitementdao" @change="clearSortBy">
+              <option value="pid">PID</option>
+            </select>
+          </div>
+          <div class="input-box">
+            <label for="relai" class="detail">Numéro de relais réclamation</label>
+            <input type="text" id="relai" v-model="formState.numeroRelais">
+          </div>
+        </div>
+      </div>-->
 </template>
 
 <script setup>

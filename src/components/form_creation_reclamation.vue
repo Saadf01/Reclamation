@@ -8,31 +8,21 @@
         <h2>Données techniques</h2>
         <div class="rec-detail">
           <div class="input-box">
-            <label for="domaine" class="detail">Domaine concerné</label>
-            <select id="domaine" v-model="formState.domaine" @change="clearSortBy">
-              <option value="pid">PID</option>
-            </select>
+           
+            <CustomDropdown 
+              :options="[{ text: 'PID', value: 'pid' }]" 
+              v-model="formState.domaine"
+              icon="domaine"
+              label="Domaine concerné"
+            />
           </div>
           <div class="input-box">
-            <label for="reception" class="detail">Réception B.O</label>
-            <select id="reception" v-model="formState.receptionBO" @change="clearSortBy">
-              <option value="Anciennes">Réclamations les plus anciennes</option>
-              <option value="Recentes">Réclamations les plus récentes</option>
-            </select>
-          </div>
-          <div class="input-box">
-            <label for="source" class="detail">Source réclamation</label>
-            <select id="source" v-model="formState.sourceReclamation" @change="clearSortBy">
-              <option value="Anciennes">Réclamations les plus anciennes</option>
-              <option value="Recentes">Réclamations les plus récentes</option>
-            </select>
-          </div>
-          <div class="input-box">
-            <label for="support" class="detail">Support de réclamation</label>
-            <select id="support" v-model="formState.supportReclamation" @change="clearSortBy">
-              <option value="Anciennes">Réclamations les plus anciennes</option>
-              <option value="Recentes">Réclamations les plus récentes</option>
-            </select>
+            <CustomDropdown 
+              :options="[{ text: 'Réclamations les plus anciennes', value: 'Anciennes' }, { text: 'Réclamations les plus récentes', value: 'Recentes' }]" 
+              v-model="formState.receptionBO"
+              icon="source"
+              label="Réception B.O"
+            />
           </div>
           <div class="input-box">
             <label for="type" class="detail">Type réclamant</label>
@@ -45,115 +35,79 @@
               <option value="Anciennes">Autre citoyen</option>
             </select>
           </div>
+          <div class="input-box">
+            <CustomDropdown 
+              :options="[{ text: 'Réclamations les plus anciennes', value: 'Anciennes' }, { text: 'Réclamations les plus récentes', value: 'Recentes' }]" 
+              v-model="formState.supportReclamation"
+              icon="source"
+              label="Support de réclamation"
+            />
+          </div>
+          <div class="input-box">
+            <CustomDropdown 
+              :options="sources"
+              v-model="formState.sourceReclamation"
+              icon="source"
+              label="Source réclamation"
+            />
+          </div>
+          <div class="input-box" v-if="showNumeroDossier">
+            <label for="idrec" class="detail">Numéro du dossier médiateur</label>
+            <input type="text" id="idrec" v-model="formState.numeroDossier" required>
+          </div>
         </div>
       </div>  
       <div class="blue-borders">
         <h2>Données d'organisation</h2>
         <div class="rec-detail">
           <div class="input-box">
-            <label for="idrec" class="detail">Société</label>
-            <Multiselect
+            <CustomDropdown 
+              :options="people.map(person => ({ text: person.name, value: person.cin }))" 
               v-model="formState.societe"
-              :options="people"
-              label="name"
-              track-by="name"
-              placeholder="Sélectionner ou rechercher..."
-              :searchable="true"
-              :taggable="true"
-              :add-tag="addSocieteTag"
-              @select="onSocieteSelect"
-              class="custom-multiselect"
-
+              icon="source"
+              label="Société"
             />
-            <p v-if="errorSociete" class="error-message">{{ errorSociete }}</p>
           </div>
           <div class="input-box">
-            <label for="idrec" class="detail">Agence commerciale</label>
-            <Multiselect
+            <CustomDropdown 
+              :options="people.map(person => ({ text: person.name, value: person.cin }))" 
               v-model="formState.agence"
-              :options="people"
-              label="name"
-              track-by="name"
-              placeholder="Sélectionner ou rechercher..."
-              :searchable="true"
-              :taggable="true"
-              :add-tag="addAgenceTag"
-              @select="onAgenceSelect"
+              icon="source"
+              label="Agence commerciale"
             />
-            <p v-if="errorAgence" class="error-message">{{ errorAgence }}</p>
           </div>
-          <div class="input-box">
-            <label for="idrec" class="detail">Numéro du dossier médiateur</label>
-            <input type="text" id="idrec" v-model="formState.numeroDossier" required>
-          </div>
-          <div class="input-box">
-            <label for="idrec" class="detail">Destination de la réponse</label>
-            <Multiselect
-              v-model="formState.destinationReponse"
-              :options="people"
-              label="name"
-              track-by="name"
-              placeholder="Sélectionner ou rechercher..."
-              :searchable="true"
-              :taggable="true"
-              :add-tag="addDestinationTag"
-              @select="onDestinationSelect"
-            />
-            <p v-if="errorDestination" class="error-message">{{ errorDestination }}</p>
-          </div>
+          
+         
         </div>
       </div>
       <!-- Section Information réclamant -->
       <div class="blue-borders">
-        <h2>Données générales</h2>
+        <h2>Données générales</h2>        
         <div class="rec-detail">
           <div class="input-box">
-            <label for="idrec" class="detail">Réclamant</label>
-            <div class="input-with-icon">
-              <Multiselect
-                v-model="formState.reclamant"
-                :options="filteredReclamants"
-                label="name"
-                track-by="id"
-                placeholder="Sélectionner ou rechercher..."
-                @input="onReclamantInput"
-                :searchable="true"
-              />
-              <font-awesome-icon icon="plus" class="icon" @click="redirectToNewReclamant" />
-            </div>
-            <p v-if="errorReclamant" class="error-message">{{ errorReclamant }}</p>
+            <CustomDropdown 
+              :options="people.map(person => ({ text: person.name, value: person.cin }))" 
+              v-model="formState.reclamant"
+              icon="plus"
+              label="Réclamant"  
+              @icon-click="redirectToNewReclamant" 
+            />
           </div>
           <div class="input-box">
-            <label for="respo" class="detail">Responsable</label>
-            <div class="input-with-icon">
-              <Multiselect
-                v-model="formState.responsable"
-                :options="filteredResponsables"
-                label="name"
-                track-by="id"
-                placeholder="Sélectionner ou rechercher..."
-                @input="onResponsableInput"
-                :searchable="true"
-              />
-              <font-awesome-icon icon="plus" class="icon" @click="redirectToNewResponsable" />
-            </div>
-            <p v-if="errorResponsable" class="error-message">{{ errorResponsable }}</p>
+            <CustomDropdown 
+              :options="filteredResponsables.map(person => ({ text: person.name, value: person.cin }))" 
+              v-model="formState.responsable"
+              icon="plus"
+              label="Responsable"
+            />
           </div>
           <div class="input-box">
-            <label for="id-op" class="detail">Opération</label>
-            <div class="input-with-icon">
-              <Multiselect
-                v-model="formState.operation"
-                :options="filteredOperations"
-                label="description"
-                track-by="code"
-                placeholder="Sélectionner ou rechercher..."
-                @input="onOperationInput"
-                :searchable="true"
-              />
-              <font-awesome-icon icon="plus" class="icon" @click="redirectToNewOperation" />
-            </div>
-            <p v-if="errorOperation" class="error-message">{{ errorOperation }}</p>
+            <CustomDropdown 
+              :options="filteredOperations.map(op => ({ text: op.description, value: op.code }))" 
+              v-model="formState.operation"
+              icon="plus"
+              label="Opération"
+            />
           </div>
           <div class="input-box">
             <label for="relai" class="detail">Identification du relais réclamation</label>
@@ -190,41 +144,7 @@
         </div>
       </div>
 
-      <!-- Section Données techniques -->
-      
-      
-
-
-      <!-- Section traitement reclamation -->
-      <div class="blue-borders">
-        <h2>Détail traitement réclamation</h2>
-        <div class="rec-detail">
-          <div class="input-box">
-            <label for="disp" class="detail">Tâche</label>
-            <input type="text" id="disp" v-model="formState.tache">
-          </div>
-          <div class="input-box">
-            <label for="resp-tach" class="detail">Téléphone du responsable de la tâche</label>
-            <input type="text" id="resp-tach" v-model="formState.telephoneResponsableTache">
-          </div>
-          <div class="input-box">
-            <label for="hao" class="detail">Entite</label>
-            <select id="hao" v-model="formState.centreTraitementhao" @change="clearSortBy">
-              <option value="pid">PID</option>
-            </select>
-          </div>
-          <div class="input-box">
-            <label for="dao" class="detail">Centre de traitement DAO</label>
-            <select id="dao" v-model="formState.centreTraitementdao" @change="clearSortBy">
-              <option value="pid">PID</option>
-            </select>
-          </div>
-          <div class="input-box">
-            <label for="relai" class="detail">Numéro de relais réclamation</label>
-            <input type="text" id="relai" v-model="formState.numeroRelais">
-          </div>
-        </div>
-      </div>
+     
       <div class="blue-borders">
         <h2>Pieces jointes</h2>
         <div class="rec-detail">
@@ -232,44 +152,12 @@
             <div class="custom-file-input" @click="triggerFileInput('pdfInput')">Sélectionner un fichier PDF</div>
             <input type="file" id="pdf-upload" name="pdf-upload" accept=".pdf" @change="handleFileUpload" ref="pdfInput" class="hidden-input">
           </div>
-          <div class="input-box file-input-box">
-            <div class="custom-file-input" @click="triggerFileInput('imageInput')">Sélectionner une image</div>
-            <input type="file" id="image-upload" name="image-upload" accept="image/*" @change="handleImageUpload" ref="imageInput" class="hidden-input">
-          </div>
+         
         </div>
       </div>
-      <transition name="fade">
-        <div v-if="showDispatchSection" class="blue-borders">
-          <h2>Dispatching</h2>
-          <div class="rec-detail">
-            <div class="input-box">
-              <label for="disp" class="detail">Dispatching</label>
-              <select id="disp">
-                <option value="sao">SAO</option>
-                <option value="hao">HAO</option>
-              </select>
-            </div>
-            <div class="input-box">
-              <label for="filial" class="detail">Filiale</label>
-              <select id="filial">
-                <option value="Anciennes">Réclamations les plus anciennes</option>
-              </select>
-            </div>
-            <div class="input-box">
-              <label for="source" class="detail">Agence</label>
-              <input type="text" id="source" name="source">
-            </div>
-            <div class="input-box">
-              <label for="date-rep" class="detail">Date réponse souhaitée</label>
-              <input type="date" id="date-rep" name="date-rep">
-            </div>
-          </div>
-        </div>
-      </transition>
+      
       <div class="button-container">
-        <button id="transferButton" type="button" class="button-submit" @click="toggleTransferSection">
-          {{ cancelTransferText }}
-        </button>
+       
         <input type="submit" value="Enregistrer" class="button-submit">
       </div>
     </form>
@@ -277,27 +165,48 @@
 </template>
 
 <script>
-import Multiselect from '@vueform/multiselect'
 import '@vueform/multiselect/themes/default.css'
 import { formState } from '@/Save';
-
+import CustomDropdown from './CustomDropdown.vue';
 export default {
   components: {
-    Multiselect
+    CustomDropdown
   },
   data() {
     return {
       formState,
+      domaines: [{ text: 'PID', value: 'pid' }],
+      receptions: [
+        { text: 'Réclamations les plus anciennes', value: 'Anciennes' },
+        { text: 'Réclamations les plus récentes', value: 'Recentes' },
+      ],
+      sources: [
+        { text: 'client', value: 'client' },
+        { text: 'Médiateur du royaume', value: 'mediateur' },
+      ],
+      supports: [
+        { text: 'Réclamations les plus anciennes', value: 'Anciennes' },
+        { text: 'Réclamations les plus récentes', value: 'Recentes' },
+      ],
+      typesReclamant: [
+        { text: 'Client', value: 'Client' },
+        { text: 'Fournisseur', value: 'Fournisseur' },
+        { text: 'Ayant droit foncier', value: 'Ayant droit foncier' },
+        { text: 'Administration', value: 'Administration' },
+        { text: 'Société civile', value: 'Société civile' },
+        { text: 'Autre citoyen', value: 'Autre citoyen' },
+      ],
       people: [
-        { id: 1, cin: '12345678', name: 'John Doe' },
-        { id: 2, cin: '87654321', name: 'Jane Smith' },
-        { id: 3, cin: '98765432', name: 'Alice Johnson' }
+        { name: 'John Doe', cin: '123456', type: 'reclamant' },
+        { name: 'Jane Doe', cin: '654321', type: 'responsable' },
+        // Ajoutez d'autres personnes selon vos besoins
       ],
       operations: [
-        { code: 'OP001', description: 'Opération 1' },
-        { code: 'OP002', description: 'Opération 2' },
-        { code: 'OP003', description: 'Opération 3' }
+        { description: 'Operation 1', code: 'OP1' },
+        { description: 'Operation 2', code: 'OP2' },
+        // Ajoutez d'autres opérations selon vos besoins
       ],
+      showNumeroDossier: false,
       searchQuery: '',
       searchQueryResponsable: '',
       searchOperationQuery: '',
@@ -310,26 +219,22 @@ export default {
   },
   computed: {
     filteredReclamants() {
-      const query = this.searchQuery ? this.searchQuery.toLowerCase() : '';
-      return this.people.filter(person =>
-        person.name.toLowerCase().includes(query) ||
-        person.cin.includes(query)
-      );
+      return this.people.filter(person => person.type === 'reclamant');
     },
     filteredResponsables() {
-      const query = this.searchQueryResponsable ? this.searchQueryResponsable.toLowerCase() : '';
-      return this.people.filter(person =>
-        person.name.toLowerCase().includes(query) ||
-        person.cin.includes(query)
-      );
+      return this.people.filter(person => person.type === 'responsable');
     },
     filteredOperations() {
-      const query = this.searchOperationQuery ? this.searchOperationQuery.toLowerCase() : '';
-      return this.operations.filter(op =>
-        op.code.toLowerCase().includes(query) ||
-        op.description.toLowerCase().includes(query)
-      );
+      return this.operations;
+    },
+    
+    watch: {
+      'formState.sourceReclamation'(newValue) {
+      console.log('sourceReclamation changed to:', newValue);
+      this.showNumeroDossier = newValue === 'mediateur';
+      console.log('showNumeroDossier:', this.showNumeroDossier);
     }
+  },
   },
   methods: {
     handleFileUpload(event) {
@@ -383,3 +288,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+.hidden-input {
+  display: none;
+}
+</style>
