@@ -44,17 +44,17 @@
             />
           </div>
           <div class="input-box">
-            <CustomDropdown 
-              :options="sources"
-              v-model="formState.sourceReclamation"
-              icon="source"
-              label="Source réclamation"
-            />
-          </div>
-          <div class="input-box" v-if="showNumeroDossier">
-            <label for="idrec" class="detail">Numéro du dossier médiateur</label>
-            <input type="text" id="idrec" v-model="formState.numeroDossier" required>
-          </div>
+      <CustomDropdown 
+        :options="sources"
+        v-model="formState.sourceReclamation"
+        icon="source"
+        label="Source réclamation"
+      />
+    </div>
+    <div class="input-box" v-if="formState.sourceReclamation.value   === 'mediateur'">
+      <label for="idrec" class="detail">Numéro du dossier médiateur</label>
+      <input type="text" id="idrec" v-model="formState.numeroDossier" required>
+    </div>
         </div>
       </div>  
       <div class="blue-borders">
@@ -168,6 +168,7 @@
 import '@vueform/multiselect/themes/default.css'
 import { formState } from '@/Save';
 import CustomDropdown from './CustomDropdown.vue';
+
 export default {
   components: {
     CustomDropdown
