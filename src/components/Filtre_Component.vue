@@ -49,22 +49,25 @@
     </div>
   </div>
 
-          <!-- Div pour afficher les filtres sélectionnés -->
-          <div class="selected-filters">
+    <!-- Div pour afficher les filtres sélectionnés -->
+    <div class="selected-filters">
       <div v-for="(options, filterKey) in selectedFilters" :key="filterKey">
         <div class="selected-filter-group">
           <div class="selected-filter-label">
             <span class="material-icons">{{ filterIcons[filterKey] }}</span>
             <label>{{ filterLabels[filterKey] }}</label>
           </div>
+
           <div class="selected-filter-items">
             <span v-for="option in options" :key="option" class="selected-filter-item">
               {{ option }}
               <span class="material-icons remove-filter" @click="removeFilter(filterKey, option)">cancel</span>
             </span>
           </div>
+
         </div>
       </div>
+
     </div>
 
     <div class="filter-foot">
