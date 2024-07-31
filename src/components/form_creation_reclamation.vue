@@ -6,7 +6,31 @@
     </div>
 
     <form @submit.prevent="submitform">
+      <div class="blue-borders">
+        <h2>Données d'organisation</h2>
 
+        <div class="rec-detail">
+
+          <div class="input-box">
+            <CustomDropdown 
+              :options="societe" 
+              v-model="formState.societe"
+              icon="apartment"
+              label="Société"
+            />
+          </div>
+
+          <div class="input-box">
+            <CustomDropdown 
+              :options="societe" 
+              v-model="formState.agence"
+              icon="apartment"
+              label="Agence commerciale"
+            />
+          </div>
+          
+        </div>
+      </div>
       <div class="blue-borders">
         <h2>Données techniques</h2>
 
@@ -14,39 +38,36 @@
 
           <div class="input-box">
             <CustomDropdown 
-              :options="[{ text: 'PID', value: 'pid' }]" 
+              :options="domaine" 
               v-model="formState.domaine"
-              icon="domaine"
+              icon="category"
               label="Domaine concerné"
             />
           </div>
 
           <div class="input-box">
             <CustomDropdown 
-              :options="[{ text: 'Réclamations les plus anciennes', value: 'Anciennes' }, { text: 'Réclamations les plus récentes', value: 'Recentes' }]" 
+              :options="reception_bo" 
               v-model="formState.receptionBO"
-              icon="source"
+              icon="domain"
               label="Réception B.O"
             />
           </div>
 
           <div class="input-box">
-            <label for="type" class="detail">Type réclamant</label>
-            <select id="type" v-model="formState.typeReclamant" @change="clearSortBy">
-              <option value="Anciennes">Client</option>
-              <option value="Anciennes">Fournisseur</option>
-              <option value="Anciennes">Ayant droit foncier</option>
-              <option value="Anciennes">Administration</option>
-              <option value="Anciennes">Societe civile</option>
-              <option value="Anciennes">Autre citoyen</option>
-            </select>
+            <CustomDropdown 
+              :options="typesReclamant" 
+              v-model="formState.typesReclamant"
+              icon="source"
+              label="Type réclamant"
+            />
           </div>
 
           <div class="input-box">
             <CustomDropdown 
-              :options="[{ text: 'Réclamations les plus anciennes', value: 'Anciennes' }, { text: 'Réclamations les plus récentes', value: 'Recentes' }]" 
+              :options="support" 
               v-model="formState.supportReclamation"
-              icon="source"
+              icon="mail"
               label="Support de réclamation"
             />
           </div>
@@ -69,32 +90,7 @@
         </div>
       </div> 
 
-      <div class="blue-borders">
-        <h2>Données d'organisation</h2>
-
-        <div class="rec-detail">
-
-          <div class="input-box">
-            <CustomDropdown 
-              :options="people.map(person => ({ text: person.name, value: person.cin }))" 
-              v-model="formState.societe"
-              icon="source"
-              label="Société"
-            />
-          </div>
-
-          <div class="input-box">
-            <CustomDropdown 
-              :options="people.map(person => ({ text: person.name, value: person.cin }))" 
-              v-model="formState.agence"
-              icon="source"
-              label="Agence commerciale"
-            />
-          </div>
-          
-         
-        </div>
-      </div>
+      
 
       <!-- Section Information réclamant -->
       <div class="blue-borders">
@@ -102,60 +98,83 @@
 
         <div class="rec-detail">
 
-          <div class="input-box" id="add-reclamant">
-            <CustomDropdown 
-              :options="people.map(person => ({ text: person.name, value: person.cin }))" 
-              v-model="formState.reclamant"
-              icon="plus"
-              label="Réclamant"  
-              @icon-click="redirectToNewReclamant" 
-            />
-            <span id="add" class="material-icons">add</span>
-          </div>
-
           <div class="input-box">
-            <CustomDropdown 
-              :options="filteredResponsables.map(person => ({ text: person.name, value: person.cin }))" 
-              v-model="formState.responsable"
-              icon="plus"
-              label="Responsable"
-            />
-            <span id="add" class="material-icons">add</span>
-          </div>
-          
-          <div class="input-box">
-            <CustomDropdown 
-              :options="filteredOperations.map(op => ({ text: op.description, value: op.code }))" 
-              v-model="formState.operation"
-              icon="plus"
-              label="Opération"
-            />
-            <span id="add" class="material-icons">add</span>
-          </div>
+      <div class="input-container">
+        <CustomDropdown 
+          :options="filteredReclamants.map(person => ({ text: person.name, value: person.cin }))" 
+          v-model="formState.reclamant"
+          icon="add"
+          label="Réclamant"  
+          redirectTo="/ReclamantPage"
+        />
+      </div>
+    </div>
 
+    <div class="input-box">
+      <div class="input-container">
+        <CustomDropdown 
+          :options="filteredResponsables.map(person => ({ text: person.name, value: person.mat }))" 
+          v-model="formState.responsable"
+          icon="add"
+          label="Responsable"
+          redirectTo="/ResponsablePage"
+        />
+      </div>
+    </div>
+
+    <div class="input-box">
+      <div class="input-container">
+        <CustomDropdown 
+          :options="filteredOperations.map(op => ({ text: op.description, value: op.code }))" 
+          v-model="formState.operation"
+          icon="add"
+          label="Opération"
+          redirectTo="/OperationPage"
+
+        />
+      </div>
+    </div>
           <div class="input-box">
             <label for="relai" class="detail">Identification du relais réclamation</label>
             <input type="text" id="relai" name="relai" v-model="formState.identificationRelais">
           </div>
 
           <div class="input-box">
-            <label for="ref" class="detail">Référence bureau d'ordre</label>
-            <input type="text" id="ref" name="ref" v-model="formState.referenceBureau">
+            <div class="filter-section" >
+      <div class="filter-label">
+        
+        <label>Référence bureau d'ordre</label>
+      </div>
+      <input type="text" id="ref" name="ref" v-model="formState.referenceBureau" >
+    </div>
+          </div>
+          <div class="input-box">
+          <div class="filter-section" >
+      <div class="filter-label">
+        <span class="material-icons">today</span>
+        <label>Date de reception</label>
+      </div>
+      <input type="date" v-model="formState.dateReception" >
+    </div>
+</div>
+          <div class="input-box">
+            <div class="filter-section" >
+      <div class="filter-label">
+        <span class="material-icons">today</span>
+        <label>Date de declaration</label>
+      </div>
+      <input type="date" v-model="formState.dateDeclaration" >
+    </div>
           </div>
 
           <div class="input-box">
-            <label for="recep" class="detail">Date réception</label>
-            <input type="date" id="recep" name="recep" v-model="formState.receptionReclamation">
-          </div>
-
-          <div class="input-box">
-            <label for="date_dec" class="detail">Date de déclaration</label>
-            <input type="date" id="date_dec" name="date_dec" v-model="formState.dateSource">
-          </div>
-
-          <div class="input-box">
-            <label for="date_souh" class="detail">Date de réponse souhaitée</label>
-            <input type="date" id="date_souh" name="date_souh" v-model="formState.dateSource">
+              <div class="filter-section" >
+      <div class="filter-label">
+        <span class="material-icons">today</span>
+        <label>Date de réponse souhaitée</label>
+      </div>
+      <input type="date" v-model="formState.dateReponse" >
+    </div>
           </div>
 
           <div class="input-box">
@@ -177,16 +196,28 @@
       </div>
 
       <div class="blue-borders">
-        <h2>Pieces jointes</h2>
-
-        <div class="rec-detail">
-          <div class="input-box file-input-box">
-            <div class="custom-file-input" @click="triggerFileInput('pdfInput')">Sélectionner un fichier PDF</div>
-            <input type="file" id="pdf-upload" name="pdf-upload" accept=".pdf" @change="handleFileUpload" ref="pdfInput" class="hidden-input">
-          </div>
+  <h2>Pièces jointes</h2>
+  <button @click="openFileDialog" class="open-popup-button">Sélectionner des fichiers</button>
+  
+  <!-- Popup -->
+  <div v-if="showPopup" class="popup-overlay">
+    <div class="popup-content">
+      <h3>Ajouter des fichiers</h3>
+      <input type="file" id="file-upload-popup" name="file-upload-popup" accept=".pdf,.png,.jpeg,.jpg,.doc,.docx" multiple @change="handleFileUpload" class="file-input-popup">
+      <div class="file-list">
+        <div v-for="(file, index) in tempFiles" :key="index" class="file-item">
+          {{ file.name }}
+          <button @click="removeTempFile(index)" class="remove-file-button">Supprimer</button>
         </div>
-
       </div>
+      <div class="popup-buttons">
+        <button @click="saveFiles" class="save-files-button">Enregistrer</button>
+        <button @click="closeFileDialog" class="cancel-button">Annuler</button>
+      </div>
+    </div>
+  </div>
+</div>    
+
       
       <div class="button-container">
         <input type="submit" value="Enregistrer" class="button-submit">
@@ -197,7 +228,6 @@
 </template>
 
 <script>
-import '@vueform/multiselect/themes/default.css'
 import { formState } from '@/Save';
 import CustomDropdown from './CustomDropdown.vue';
 
@@ -207,20 +237,65 @@ export default {
   },
   data() {
     return {
+      files: [],
+      showPopup: false,
+      tempFiles: [],
+      savedFiles: [],
       formState,
-      domaines: [{ text: 'PID', value: 'pid' }],
-      receptions: [
-        { text: 'Réclamations les plus anciennes', value: 'Anciennes' },
-        { text: 'Réclamations les plus récentes', value: 'Recentes' },
-      ],
+      domaine: [
+          { text: 'Relation avec l\'agent d\'accueil',value:'acceuil' },
+          { text: 'Accueil - Renseignements',value:'acceuil-renseignement' },
+          { text: 'Accès à l\'information',value:'acce info'},
+          { text: 'Relation fournisseur de service',value:'fou' },
+          { text: 'Acquisition d\'un produit' ,value:'produit'},
+          { text: 'Relations PPP',value:'ppp' },
+          { text: 'Relations clients',value:'relation-client' },
+          { text: 'Service après vente',value:'s-a-v' },
+          { text: 'Relation prestataires techniques',value:'r-p-t' },
+          { text: 'Autres affaires techniques',value:'a-f-t' },
+          { text: 'Relation ayants droits fonciers',value:'droit foncier' },
+          { text: 'Etablissement de TF individuels',value:'etablissement' },
+          { text: 'Affaires financières',value:'a-f' },
+          { text: 'Affaires juridiques',value:'a-j' },
+          { text: 'Affaires sociales et sociétales',value:'a-s-s' },
+          { text: 'Affaires administratives',value:'a-ad' },
+          { text: 'Dénonciation, corruption et fraudes',value:'d-c-f' },
+          { text: 'Autres',value:'autre' }
+        ],
+     
       sources: [
-        { text: 'client', value: 'client' },
-        { text: 'Médiateur du royaume', value: 'mediateur' },
-      ],
-      supports: [
-        { text: 'Réclamations les plus anciennes', value: 'Anciennes' },
-        { text: 'Réclamations les plus récentes', value: 'Recentes' },
-      ],
+          { text: 'Réclamant' },
+          { text: 'Médiateur du Royaume' , value:'mediateur'},
+          { text: 'Administration' },
+          { text: 'Société civile' },
+          { text: 'chikaya.com' },
+          { text: 'Autre' }
+        ],
+      societe: [
+          { text: 'Holding Al Omrane' },
+          { text: 'Al Omrane Tanger-Tétouan-Al Hoceïma' },
+          { text: 'Al Omrane Casablanca - Settat' },
+          { text: 'Al Omrane Fès Meknès' },
+          { text: 'Al Omrane Darâa Tafilalet' },
+          { text: 'Al Omrane Région de l\'Oriental' },
+          { text: 'Al Omrane Marrakech Safi' },
+          { text: 'Al Omrane Souss Massa' },
+          { text: 'Al Omrane Al Janoub' },
+          { text: 'Al Omrane Beni Mellal Khenifra' },
+          { text: 'Al Omrane Rabat-Salé-Kénitra' }
+        ],
+        reception_bo: [
+          { text: 'HAO' },
+          { text: 'SAO' }
+        ],
+      support: [
+          { text: 'Courrier' },
+          { text: 'Contact Direct (Fiche)' },
+          { text: 'Téléphone (Standard)' },
+          { text: 'Centre d\'appels' },
+          { text: 'Site Web' },
+          { text: 'Autre' }
+        ],
       typesReclamant: [
         { text: 'Client', value: 'Client' },
         { text: 'Fournisseur', value: 'Fournisseur' },
@@ -230,8 +305,10 @@ export default {
         { text: 'Autre citoyen', value: 'Autre citoyen' },
       ],
       people: [
-        { name: 'John Doe', cin: '123456', type: 'reclamant' },
-        { name: 'Jane Doe', cin: '654321', type: 'responsable' },
+        { name: 'Rayane', cin: '123456', type: 'reclamant' },
+        { name: 'Saad', mat: '654321', type: 'reclamant' },
+        { name: 'employe 1', mat: '654321', type: 'responsable' },
+        { name: 'employe 2', mat: '654321', type: 'responsable' },
         // Ajoutez d'autres personnes selon vos besoins
       ],
       operations: [
@@ -262,48 +339,41 @@ export default {
     },
   },
   methods: {
-    handleFileUpload(event) {
-      const file = event.target.files[0];
-      console.log('PDF File uploaded:', file);
-      // Handle the file upload logic here
+    openFileDialog() {
+      this.tempFiles = [...this.savedFiles];
+      this.showPopup = true;
     },
-    handleImageUpload(event) {
-      const file = event.target.files[0];
-      console.log('Image uploaded:', file);
-      // Handle the image upload logic here
+    closeFileDialog() {
+      this.showPopup = false;
+    },
+    handleFileUpload(event) {
+      const files = Array.from(event.target.files);
+      const maxSize = 5 * 1024 * 1024; // 5 Mo en octets
+      const validFiles = [];
+
+      files.forEach(file => {
+        if (file.size > maxSize) {
+          alert(`Le fichier ${file.name} ne doit pas dépasser 5 Mo.`);
+        } else {
+          const url = URL.createObjectURL(file);
+          validFiles.push({ name: file.name, url });
+        }
+      });
+
+      this.tempFiles = [...this.tempFiles, ...validFiles];
+    },
+    saveFiles() {
+      this.savedFiles = [...this.tempFiles];
+      this.closeFileDialog();
+    },
+    removeTempFile(index) {
+      this.tempFiles.splice(index, 1);
     },
     triggerFileInput(refName) {
       this.$refs[refName].click();
     },
-    toggleTransferSection() {
-      this.showDispatchSection = !this.showDispatchSection;
-      if (this.showDispatchSection) {
-        this.cancelTransferText = 'Annuler transfert';
-      } else {
-        this.cancelTransferText = 'Transferer';
-      }
-    },
-    onReclamantInput(value) {
-      this.searchQuery = value;
-      this.errorReclamant = '';
-    },
-    onResponsableInput(value) {
-      this.searchQueryResponsable = value;
-      this.errorResponsable = '';
-    },
-    onOperationInput(value) {
-      this.searchOperationQuery = value;
-      this.errorOperation = '';
-    },
-    redirectToNewReclamant() {
-      this.$router.push('/ReclamantPage'); // Adjust the route as needed
-    },
-    redirectToNewResponsable() {
-      this.$router.push('/ResponsablePage'); // Adjust the route as needed
-    },
-    redirectToNewOperation() {
-      this.$router.push('/OperationPage'); // Adjust the route as needed
-    },
+    
+   
     submitform() {
       // Logic for form submission
       if (!this.errorReclamant && !this.errorResponsable && !this.errorOperation) {
@@ -317,28 +387,112 @@ export default {
 };
 </script>
 
-<style scoped>
+<style >
 .hidden-input {
   display: none;
 }
 
-#add-reclamant .custom-dropdown {
-  flex: 1; /* This will make the dropdown take the available space */
+
+.icon-add {
+  color: rgb(0, 94, 255); /* Couleur de l'icône */
+  font-size: 24px; /* Taille de l'icône */
+  cursor: pointer; /* Curseur pointer au survol */
+  margin-right: 8px; /* Espace entre l'icône et le label */
+  transition: color 0.2s ease-out; /* Effet de transition */
 }
 
-.input-box #add{
-  margin-left: 8px;
-  background-color: rgb(0, 94, 255);
+.icon-add:hover {
+  color: rgba(0, 94, 255, 0.7); /* Couleur de l'icône au survol */
+}
+
+
+.open-popup-button {
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
   border-radius: 5px;
-  color: white;
-  font-size: 20px;
-  padding: 6px;
-  transition: 0.2s ease-out;
   cursor: pointer;
-  bottom: 0;
+  font-size: 16px;
 }
 
-#add:hover{
-  background-color: rgba(0, 94, 255, 0.683);
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.popup-content h3 {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+.file-input-popup {
+  margin-bottom: 15px;
+}
+
+.file-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+.remove-file-button {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 3px 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.save-files-button,
+.cancel-button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 10px;
+}
+
+.save-files-button {
+  background-color: #28a745;
+  color: #fff;
+}
+ 
+.cancel-button {
+  background-color: #6c757d;
+  color: #fff;
+}
+
 </style>

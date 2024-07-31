@@ -2,15 +2,19 @@
 import { reactive } from 'vue';
 
 export const formState = reactive({
-  reclamant: undefined,
+  reclamant: '',
   responsable: '',
   operation: '',
   identificationRelais: '',
   referenceBureau: '',
   receptionReclamation: '',
   dateSource: '',
+  dateReception:'',
+  dateDeclaration:'',
+  dateReponse:'',
   domaine: '',
   receptionBO: '',
+  supportReclamation:'',
   sourceReclamation:'', 
   numeroDossier:'',
   textarea1: '', // New textarea

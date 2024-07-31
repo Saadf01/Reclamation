@@ -254,7 +254,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style >
 .filter-sections {
   display: flex;
   flex-wrap: wrap;
