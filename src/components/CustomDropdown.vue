@@ -2,7 +2,7 @@
     <div>
       <div class="filter-section" @mouseenter="showDropdown" @mouseleave="hideDropdown">
         <div class="filter-label">
-          <span class="material-icons">{{ icon }}</span>
+          <span :class="['material-icons', iconClass]" @click="handleIconClick">{{ icon }}</span>
           <label>{{ label }}</label>
         </div>
         <div class="filter-toggle" @click="toggleDropdown">
@@ -35,6 +35,10 @@
         type: String,
         default: '',
       },
+      redirectTo: {
+      type: String,
+      default: '', // URL de redirection par défaut
+    },
       icon: {
         type: String,
         default: 'source',
@@ -52,6 +56,9 @@
       };
     },
     computed: {
+      iconClass() {
+      return this.icon === 'add' ? 'icon-add' : '';
+    },
       filteredOptions() {
         return this.options.filter(option =>
           option.text.toLowerCase().includes(this.searchQuery.toLowerCase())
@@ -73,6 +80,14 @@
       hideDropdown() {
         this.dropdownVisible = false;
       },
+      handleIconClick() {
+      if (this.icon === 'add' && this.redirectTo) {
+        this.redirectToNewPage(this.redirectTo);
+      }
+    },
+    redirectToNewPage(page) {
+      this.$router.push(page);
+    }
     },
   };
   </script>
