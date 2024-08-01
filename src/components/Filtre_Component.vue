@@ -183,7 +183,7 @@ export default {
       filterLabels: {
         societe: 'Société',
         domaine: 'Domaine',
-        reception_bo: 'Reception du bureau D\'ordre',
+        reception_bo: 'Reception B.O.',
         source: 'Source',
         support: 'Support',
         statut: 'Statut',

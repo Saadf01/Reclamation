@@ -11,20 +11,17 @@
        <div class="search-div">
         <input v-model="searchQuery" type="text" placeholder="Rechercher..." class="search-bar">
        </div>
-      
 
       <div class="filter">
         <!-- Composant Filtre -->
-        <FiltreComponent :isVisible="isFilterSidebarVisible" @toggle-sidebar="toggleFilterSidebar" @reset-filters="resetFilters" @apply-filters="applyFilters" />
+        <FiltreComponent :isVisible="isFilterSidebarVisible" @reset-filters="resetFilters" @apply-filters="applyFilters" />
       </div>
-
-
 
       <!-- Tableau des réclamations -->
       <table class="styled-table">
         <thead>
           <tr>
-            <th @click="sortTable('id_reclamation')">ID Réclamation <span class="material-icons">{{ getSortIcon('id_reclamation') }}</span></th>
+            <th @click="sortTable('reference')">Réference <span class="material-icons">{{ getSortIcon('reference') }}</span></th>
             <th @click="sortTable('societe')">Société <span class="material-icons">{{ getSortIcon('societe') }}</span></th>
             <th @click="sortTable('responsable')">Responsable <span class="material-icons">{{ getSortIcon('responsable') }}</span></th>
             <th @click="sortTable('reclamant')">Réclamant <span class="material-icons">{{ getSortIcon('reclamant') }}</span></th>
@@ -41,34 +38,35 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in paginatedReclamations" :key="index">
-            <td>{{ item.id_reclamation }}</td>
-            <td>{{ item.societe }}</td>
-            <td>{{ item.responsable }}</td>
-            <td>{{ item.reclamant }}</td>
-            <td>{{ item.objet }}</td>
-            <td>{{ item.domaine }}</td>
-            <td>{{ item.reception_bo }}</td>
-            <td>{{ item.source }}</td>
-            <td>{{ item.operation }}</td>
-            <td>{{ item.support }}</td>
-            <td>{{ item.date_reception }}</td>
-            <td>{{ item.date_declaration }}</td>
-            <td><div :class="['statut', getStatusClass(item.statut)]"><span>{{ item.statut }}</span></div></td>
+          <tr v-for="reclamation in reclamations" :key="reclamation.id">
+            <td>{{ reclamation.reference }}</td>
+            <td>{{ reclamation.societe }}</td>
+            <td>{{ reclamation.responsableNom }} {{ reclamation.responsablePrenom }}</td>
+            <td>{{ reclamation.reclamantNom }} {{ reclamation.reclamantPrenom }}</td>
+            <td>{{ reclamation.objet }}</td>
+            <td>{{ reclamation.domaine }}</td>
+            <td>{{ reclamation.receptionBo }}</td>
+            <td>{{ reclamation.source }}</td>
+            <td>{{ reclamation.operationNom }}</td>
+            <td>{{ reclamation.support }}</td>
+            <td>{{ reclamation.dateReception }}</td>
+            <td>{{ reclamation.dateDeclaration }}</td>
+            <td><div :class="['statut', getStatusClass(reclamation.statut)]"><span>{{ reclamation.statut }}</span></div></td>
             <td>
+
               <div class="action-menu" @mouseleave="closeDropdown">
+
                 <button class="action-menu-button" @click="toggleDropdown">
                   <span class="action">Action</span>
                   <span class="material-icons">arrow_drop_down</span>
                 </button>
+
                 <ul v-if="dropdownOpen" class="dropdown">
-                  <!-- Option pour visualiser -->
                   <li>
                     <router-link :to="`/VisualiserReclamation`" class="button">
                       <span class="text">Visualiser</span>
                     </router-link>
                   </li>
-                  <!-- Option pour modifier -->
                   <li>
                     <router-link :to="`/`" class="button">
                       <span class="text">Modifier</span>
@@ -85,6 +83,7 @@
                     </router-link>
                   </li>
                 </ul>
+
               </div>
             </td>
           </tr>
@@ -107,21 +106,19 @@
         <button class="next-button" @click="nextPage" :disabled="currentPage === totalPages">Suivant</button>
         <div class="items-per-page-selector">
           <span>Afficher</span>
-          <select v-model="itemsPerPage" @change="currentPage = 1">
+          <select v-model="itemsPerPage" @change="updateItemsPerPage">
             <option v-for="option in [10, 15, 20, 25, 30]" :key="option" :value="option">{{ option }}</option>
           </select>
           <span>réclamations par page</span>
         </div>
       </div>
-
-
-
     </div>
   </div>
 </template>
 
 <script>
 import FiltreComponent from '@/components/Filtre_Component.vue';
+import axios from 'axios';
 
 export default {
   name: 'Liste_Reclamations_Page',
@@ -130,7 +127,7 @@ export default {
   },
   data() {
     return {
-      sortBy: 'id_reclamation',
+      sortBy: 'reference',
       sortDirection: 'asc',
       isFilterSidebarVisible: false,
       dropdownOpen: false,
@@ -147,94 +144,42 @@ export default {
         date_declaration_start: '',
         date_declaration_end: ''
       },
-      reclamations: [
-        // Exemple de données ; remplacez par des données réelles
-        { id_reclamation: '1', societe: 'Al Omrane Casablanca - Settat', responsable: 'Responsable 1', reclamant: 'Reclamant 1', objet: 'Objet 1', domaine: 'Autre', source: 'Réclamant', operation: 'ANNASSIM', reception_bo: 'SAO', support: 'Courrier', date_reception: '2023-01-01', date_declaration: '2023-01-02', statut: 'En cours de traitement' },
-        { id_reclamation: '1', societe: 'Al Omrane Casablanca - Settat', responsable: 'Responsable 1', reclamant: 'Reclamant 1', objet: 'Objet 1', domaine: 'Autre', source: 'Réclamant', operation: 'ANNASSIM', reception_bo: 'SAO', support: 'Courrier', date_reception: '2023-01-01', date_declaration: '2023-01-02', statut: 'En cours de traitement' },
-        { id_reclamation: '1', societe: 'Al Omrane Casablanca - Settat', responsable: 'Responsable 1', reclamant: 'Reclamant 1', objet: 'Objet 1', domaine: 'Autre', source: 'Réclamant', operation: 'ANNASSIM', reception_bo: 'SAO', support: 'Courrier', date_reception: '2023-01-01', date_declaration: '2023-01-02', statut: 'En cours de traitement' }, 
-        { id_reclamation: '2', societe: 'Al Omrane Fès Meknès', responsable: 'Responsable 2', reclamant: 'Reclamant 2', objet: 'Objet 2', domaine: 'Accueil - Renseignements', source: 'Administration', operation: 'ANNASSIM', reception_bo: 'HAO', support: 'Site Web', date_reception: '2023-02-01', date_declaration: '2023-02-02', statut: 'Cloturée' },
-      ],
+      reclamations: [],
       currentPage: 1,
       itemsPerPage: 10
     };
   },
-  computed: {
-    filteredReclamations() {
-      return this.reclamations.filter(item => {
-        const matchesSearchQuery = Object.values(item).some(value => 
-          value.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
-
-        const isDateReceptionInRange = (!this.filters.date_reception_start || new Date(item.date_reception) >= new Date(this.filters.date_reception_start)) &&
-                                       (!this.filters.date_reception_end || new Date(item.date_reception) <= new Date(this.filters.date_reception_end));
-                                       
-        const isDateDeclarationInRange = (!this.filters.date_declaration_start || new Date(item.date_declaration) >= new Date(this.filters.date_declaration_start)) &&
-                                         (!this.filters.date_declaration_end || new Date(item.date_declaration) <= new Date(this.filters.date_declaration_end));
-
-        return matchesSearchQuery && (
-          (this.filters.societe.length === 0 || this.filters.societe.includes(item.societe)) &&
-          (this.filters.domaine.length === 0 || this.filters.domaine.includes(item.domaine)) &&
-          (this.filters.source.length === 0 || this.filters.source.includes(item.source)) &&
-          (this.filters.support.length === 0 || this.filters.support.includes(item.support)) &&
-          (this.filters.statut.length === 0 || this.filters.statut.includes(item.statut)) &&
-          (this.filters.reception_bo.length === 0 || this.filters.reception_bo.includes(item.reception_bo)) &&
-          isDateReceptionInRange &&
-          isDateDeclarationInRange
-        );
-      }).sort((a, b) => {
-        let modifier = this.sortDirection === 'asc' ? 1 : -1;
-        if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
-        if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
-        return 0;
-      });
-    },
-    paginatedReclamations() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.filteredReclamations.slice(start, end);
-    },
-    totalPages() {
-      return Math.ceil(this.filteredReclamations.length / this.itemsPerPage);
-    },
-    getPageButtons() {
-      const totalPages = this.totalPages;
-      const currentPage = this.currentPage;
-      const range = 5; // Numéro de page affiché avant et après la page actuelle
-
-      let startPage = Math.max(currentPage - range, 1);
-      let endPage = Math.min(currentPage + range, totalPages);
-
-      // Ajustement si le nombre de pages est inférieur à 2*range + 1
-      if (endPage - startPage < 2 * range) {
-        if (startPage === 1) {
-          endPage = Math.min(startPage + 2 * range, totalPages);
-        } else if (endPage === totalPages) {
-          startPage = Math.max(endPage - 2 * range, 1);
-        }
-      }
-
-      const pages = [];
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(i);
-      }
-      return pages;
-    },
+  mounted() {
+    this.fetchReclamations();
   },
   methods: {
-    toggleFilterSidebar() {
-      this.isFilterSidebarVisible = !this.isFilterSidebarVisible;
+    fetchReclamations() {
+      axios.get('https://localhost:7148/api/reclamations')
+        .then(response => {
+          if (response.data && response.data.data) {
+            this.reclamations = response.data.data;
+            console.log("Réclamations récupérées:", this.reclamations);
+          } else {
+            console.error("Données inattendues dans la réponse:", response);
+          }
+        })
+        .catch(error => {
+          console.error("Erreur lors de la récupération des réclamations:", error);
+        });
     },
-    sortTable(key) {
-      if (this.sortBy === key) {
+    sortTable(column) {
+      if (this.sortBy === column) {
         this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
       } else {
-        this.sortBy = key;
+        this.sortBy = column;
         this.sortDirection = 'asc';
       }
     },
     getSortIcon(column) {
-      if (this.sortBy !== column) return 'unfold_more';
-      return this.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';
+      if (this.sortBy === column) {
+        return this.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';
+      }
+      return 'arrow_upward'; // Icône par défaut
     },
     resetFilters() {
       this.filters = {
@@ -249,9 +194,14 @@ export default {
         date_declaration_start: '',
         date_declaration_end: ''
       };
+      this.searchQuery = '';
+      this.fetchReclamations(); // Recharger les réclamations après réinitialisation des filtres
     },
-    applyFilters(filters) {
-      this.filters = filters;
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
+    },
+    closeDropdown() {
+      this.dropdownOpen = false;
     },
     getStatusClass(statut) {
       switch(statut) {
@@ -270,28 +220,6 @@ export default {
           return '';
       }
     },
-    toggleDropdown() {
-      this.dropdownOpen = !this.dropdownOpen;
-    },
-    closeDropdown() {
-      this.dropdownOpen = false;
-    },
-    prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-      }
-    },
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++;
-      }
-    },
-    setPage(page) {
-    this.currentPage = page;
-    },
-    updateItemsPerPage() {
-      this.currentPage = 1; // Reset to the first page
-    }
   }
 };
 </script>
