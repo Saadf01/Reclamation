@@ -24,7 +24,7 @@ const routes = [
         component: ListeReclamations
     },
     {
-        path: '/VisualiserReclamation',
+        path: '/VisualiserReclamation/:id',
         name: 'VisualiserReclamation',
         component: VisualiserReclamation
     },

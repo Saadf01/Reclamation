@@ -21,34 +21,34 @@
         </div>
 
         <div class="info_reclamation">
-            <p id="reclamation"><strong>Réclamation :</strong> 906976</p>
+            <p id="reclamation"><strong>Réclamation :</strong> {{ reclamation.reference }}</p>
             <div class="statut-container">
                 <strong>Statut :</strong>
-                <div class="div-statut" :style="getStatutStyle('Cloturée')"><span>Cloturée</span></div>
+                <div class="div-statut" :style="getStatutStyle(reclamation.statut)"><span>{{ reclamation.statut }}</span></div>
             </div>
-            <p id="description_statut"><strong>Description Statut :</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+            <p id="description_statut"><strong>Description Statut :</strong> ...</p>
         </div>
 
         <div class="sections">
-            <Section_Donnees_Generales></Section_Donnees_Generales>
-            <Section_Dates_Statuts></Section_Dates_Statuts>
+            <Section_Donnees_Generales :reclamation-id="route.params.id" ></Section_Donnees_Generales>
+            <Section_Dates_Statuts :reclamation-id="route.params.id" ></Section_Dates_Statuts>
         </div>
 
         <div class="sections">
-            <Section_Donnees_Organisation></Section_Donnees_Organisation>
-            <Section_Donnees_Techniques></Section_Donnees_Techniques>
+            <Section_Donnees_Organisation :reclamation-id="route.params.id" ></Section_Donnees_Organisation>
+            <Section_Donnees_Techniques :reclamation-id="route.params.id" ></Section_Donnees_Techniques>
         </div>
 
         <div class="sections">
-            <Section_Taches></Section_Taches>
+            <Section_Taches :reclamation-id="route.params.id" ></Section_Taches>
         </div>
 
         <div class="sections">
-            <Section_Pieces_Jointes></Section_Pieces_Jointes>
+            <Section_Pieces_Jointes :reclamation-id="route.params.id" ></Section_Pieces_Jointes>
         </div>
 
         <div class="sections">
-            <Section_Historique></Section_Historique>
+            <Section_Historique :reclamation-id="route.params.id" ></Section_Historique>
         </div>
 
         <!-- Popup Component -->
@@ -59,7 +59,9 @@
 
 <script setup>
 
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
 import Section_Donnees_Generales from '@/components/Section_Donnees_Generales.vue';
 import Section_Dates_Statuts from '@/components/Section_Dates_Statuts.vue';
 import Section_Donnees_Organisation from '@/components/Section_Donnees_Organisation.vue';
@@ -95,6 +97,26 @@ const getStatutStyle = (statut) => {
         backgroundColor,
     };
 };
+
+const route = useRoute();
+const reclamation = ref({});
+
+const fetchReclamationDetails = async () => {
+  const reclamationId = route.params.id;
+  try {
+    const response = await axios.get(`https://localhost:7148/api/reclamations/${reclamationId}`);
+    if (response.data) {
+      reclamation.value = response.data;
+    } else {
+      console.error("Données inattendues dans la réponse:", response);
+    }
+  } catch (error) {
+    console.error("Erreur lors de la récupération des détails de la réclamation:", error);
+  }
+};
+
+onMounted(fetchReclamationDetails);
+
 </script>
 
 

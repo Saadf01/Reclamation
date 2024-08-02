@@ -27,10 +27,8 @@
             <th @click="sortTable('reclamant')">Réclamant <span class="material-icons">{{ getSortIcon('reclamant') }}</span></th>
             <th @click="sortTable('objet')">Objet <span class="material-icons">{{ getSortIcon('objet') }}</span></th>
             <th @click="sortTable('domaine')">Domaine <span class="material-icons">{{ getSortIcon('domaine') }}</span></th>
-            <th @click="sortTable('reception_bo')">Réception BO <span class="material-icons">{{ getSortIcon('reception_bo') }}</span></th>
             <th @click="sortTable('source')">Source <span class="material-icons">{{ getSortIcon('source') }}</span></th>
-            <th @click="sortTable('operation')">Opération <span class="material-icons">{{ getSortIcon('operation') }}</span></th>
-            <th @click="sortTable('support')">Support <span class="material-icons">{{ getSortIcon('support') }}</span></th>
+            <th @click="sortTable('date_creation')">Date de création <span class="material-icons">{{ getSortIcon('date_creation') }}</span></th>
             <th @click="sortTable('date_reception')">Date de réception <span class="material-icons">{{ getSortIcon('date_reception') }}</span></th>
             <th @click="sortTable('date_declaration')">Date de déclaration <span class="material-icons">{{ getSortIcon('date_declaration') }}</span></th>
             <th @click="sortTable('statut')">Statut <span class="material-icons">{{ getSortIcon('statut') }}</span></th>
@@ -45,10 +43,8 @@
             <td>{{ reclamation.reclamantNom }} {{ reclamation.reclamantPrenom }}</td>
             <td>{{ reclamation.objet }}</td>
             <td>{{ reclamation.domaine }}</td>
-            <td>{{ reclamation.receptionBo }}</td>
             <td>{{ reclamation.source }}</td>
-            <td>{{ reclamation.operationNom }}</td>
-            <td>{{ reclamation.support }}</td>
+            <td>{{ reclamation.dateCreation }}</td>
             <td>{{ reclamation.dateReception }}</td>
             <td>{{ reclamation.dateDeclaration }}</td>
             <td><div :class="['statut', getStatusClass(reclamation.statut)]"><span>{{ reclamation.statut }}</span></div></td>
@@ -63,7 +59,7 @@
 
                 <ul v-if="dropdownOpen" class="dropdown">
                   <li>
-                    <router-link :to="`/VisualiserReclamation`" class="button">
+                    <router-link :to="`/VisualiserReclamation/${reclamation.id}`" class="button">
                       <span class="text">Visualiser</span>
                     </router-link>
                   </li>
@@ -136,9 +132,7 @@ export default {
         societe: [],
         domaine: [],
         source: [],
-        support: [],
         statut: [],
-        reception_bo: [],
         date_reception_start: '',
         date_reception_end: '',
         date_declaration_start: '',
@@ -186,9 +180,7 @@ export default {
         societe: [],
         domaine: [],
         source: [],
-        support: [],
         statut: [],
-        reception_bo: [],
         date_reception_start: '',
         date_reception_end: '',
         date_declaration_start: '',

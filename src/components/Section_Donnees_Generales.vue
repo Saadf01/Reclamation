@@ -9,19 +9,19 @@
         </div>
 
         <div class="donnees">
-            <p><strong>ID réclamation :</strong> 029202393</p>
-            <p><strong>Réclamant :</strong> 029202393</p>
-            <p><strong>Objet :</strong> 029202393</p>
-            <p><strong>Responsable :</strong> 029202393</p>
-            <p><strong>Identification relai réclamation :</strong> 029202393</p>
-            <p><strong>Référence Bureau d'ordre :</strong> 029202393</p>
-            <p><strong>Nom de l'opération :</strong> 029202393</p>
-            <p><strong>Date de réponse souhaitée :</strong> 029202393</p>
-            <p><strong>Date de réception :</strong> 029202393</p>
-            <p><strong>Date de déclaration :</strong> 029202393</p>
-            <p><strong>Description :</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
-            <p><strong>Dispostions particulières :</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
-            <p><strong>Commentaire :</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+            <p><strong>Référence :</strong> {{ reclamation.reference }}</p>
+            <p><strong>Réclamant :</strong> {{ reclamation.reclamantNom }} {{ reclamation.reclamantPrenom }}</p>
+            <p><strong>Objet :</strong> {{ reclamation.objet }}</p>
+            <p><strong>Responsable :</strong> {{ reclamation.responsableNom }} {{ reclamation.responsablePrenom }}</p>
+            <p><strong>Identification relai réclamation :</strong> ...</p>
+            <p><strong>Référence Bureau d'ordre :</strong> {{ reclamation.referenceBo }}</p>
+            <p><strong>Nom de l'opération :</strong> {{ reclamation.operationNom }}</p>
+            <p><strong>Date de réponse souhaitée :</strong> {{ reclamation.dateReponseSouhaitee }}</p>
+            <p><strong>Date de réception :</strong> {{ reclamation.dateReception }}</p>
+            <p><strong>Date de déclaration :</strong> {{ reclamation.dateDeclaration }}</p>
+            <p><strong>Description :</strong> {{ reclamation.description }} </p>
+            <p><strong>Dispostions particulières :</strong> {{ reclamation.dispositionParticuliere }} </p>
+            <p><strong>Commentaire :</strong> {{ reclamation.commentaire }} </p>
 
         </div>
         
@@ -30,7 +30,29 @@
 
 <script setup>
 
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { defineProps } from 'vue';
+
+const props = defineProps({
+  reclamationId: {
+    type: [String, Number],
+    required: true,
+  },
+});
+
+const reclamation = ref({});
+
+const fetchReclamation = async () => {
+  try {
+    const response = await axios.get(`https://localhost:7148/api/reclamations/${props.reclamationId}`);
+    reclamation.value = response.data;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des détails:", error);
+  }
+};
+
+onMounted(fetchReclamation);
 
 const is_expanded = ref(localStorage.getItem("is_expanded") === "false")
 
