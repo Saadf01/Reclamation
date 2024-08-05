@@ -9,22 +9,45 @@
         </div>
 
         <div class="donnees">
-            <p><strong>Date d'initiation :</strong> 17/07/2024</p>
-            <p><strong>Date de début du traitement :</strong> 17/07/2024</p>
-            <p><strong>Date de mise en réexamen :</strong> </p>
-            <p><strong>Date de cloture :</strong> 17/07/2024</p>
-            <p><strong>Date de recours :</strong> </p>
-            <p><strong>Date de médiation :</strong> </p>
-            <p><strong>Date contentieux :</strong> </p>
-            <p><strong>Date de mise en erreur :</strong> </p>
+            <p><strong>Date d'initiation :</strong> {{ reclamation.dateCreation }}</p>
+            <p><strong>Date de début du traitement :</strong> {{ reclamation.dateDebutTraitement }}</p>
+            <p><strong>Date de mise en réexamen :</strong> {{ reclamation.dateReexamen }}</p>
+            <p><strong>Date de clôture :</strong> {{ reclamation.dateCloture }}</p>
+            <p><strong>Date de recours :</strong> {{ reclamation.dateRecours }}</p>
+            <p><strong>Date de médiation :</strong> {{ reclamation.dateMediation }}</p>
+            <p><strong>Date contentieux :</strong> {{ reclamation.dateContentieux }}</p>
+            <p><strong>Date de mise en erreur :</strong> {{ reclamation.dateErreur }}</p>
         </div>
+
         
     </div>
 </template>
 
 <script setup>
 
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { defineProps } from 'vue';
+
+const props = defineProps({
+  reclamationId: {
+    type: [String, Number],
+    required: true,
+  },
+});
+
+const reclamation = ref({});
+
+const fetchReclamation = async () => {
+  try {
+    const response = await axios.get(`https://localhost:7148/api/reclamations/${props.reclamationId}`);
+    reclamation.value = response.data;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des détails:", error);
+  }
+};
+
+onMounted(fetchReclamation);
 
 const is_expanded = ref(localStorage.getItem("is_expanded") === "false")
 

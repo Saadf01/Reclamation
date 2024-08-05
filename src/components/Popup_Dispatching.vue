@@ -31,7 +31,7 @@
             </select>
         </div>
   
-        <div v-if="selectedOption === 'SAO' || selectedOption === 'Agence'" class="form-group">
+        <div v-if="selectedOption === 'Agence'" class="form-group">
           <label>Dispatching Agence :</label>
           <input type="text" placeholder="Précisez l'agence..." />
         </div>
