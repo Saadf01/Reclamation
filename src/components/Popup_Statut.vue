@@ -1,45 +1,75 @@
 <template>
-    <div class="popup-overlay" @click.self="$emit('close')">
+  <div class="popup-overlay" @click.self="$emit('close')">
       <div class="popup-content">
-        <button class="close-button" @click="$emit('close')">&times;</button>
-        <h2>Changement de statut</h2>
-  
-        <div class="form-group">
-          <label><strong>Nouveau statut :</strong> {{ selectedStatus }}</label>
-        </div>
-  
-        <div class="form-group">
-          <label><strong>Motif :</strong></label>
-          <textarea v-model="motif" placeholder="Précisez le motif..." rows="4"></textarea>
-        </div>
-  
-        <div class="button-container">
-          <button class="confirm-button" @click="confirmChange">Confirmer</button>
-        </div>
+          <button class="close-button" @click="$emit('close')">&times;</button>
+          <h2>Changement de statut</h2>
+
+          <div class="form-group">
+              <label><strong>Nouveau statut :</strong> {{ statusName }}</label>
+          </div>
+
+          <div class="form-group">
+              <label><strong>Motif :</strong></label>
+              <textarea v-model="motif" placeholder="Précisez le motif..." rows="4"></textarea>
+          </div>
+
+          <div class="button-container">
+              <button class="confirm-button" @click="confirmChange">Confirmer</button>
+          </div>
       </div>
-    </div>
-  </template>
-  
-  <script setup>
-  import { ref, defineProps, defineEmits } from 'vue';
-  
-  const props = defineProps({
-    selectedStatus: String
-  });
-  
-  const emit = defineEmits(['close', 'confirm']);
-  
-  const motif = ref('');
-  
-  const confirmChange = () => {
-    if (motif.value.trim()) {
-      emit('confirm', { status: props.selectedStatus, motif: motif.value });
-      emit('close');
-    } else {
+  </div>
+</template>
+
+<script setup>
+import { ref, defineProps, defineEmits, watch } from 'vue';
+import axios from 'axios';
+
+const props = defineProps({
+  selectedStatus: Number,
+  reclamationId: {
+      type: [String, Number],
+      required: true,
+  },
+  availableStatuses: Array,
+});
+
+const emit = defineEmits(['close', 'confirm']);
+
+const motif = ref('');
+const statusName = ref('');
+
+watch(() => props.selectedStatus, (newStatusId) => {
+    const status = props.availableStatuses.find(status => status.id === newStatusId);
+    statusName.value = status ? status.name : 'Statut inconnu';
+}, { immediate: true });
+
+const confirmChange = async () => {
+  if (motif.value.trim()) {
+      try {
+          // Mettre à jour le statut de la réclamation
+          await axios.put(`https://localhost:7148/api/reclamations/${props.reclamationId}/status`, {
+              newStatusId: props.selectedStatus,
+          });
+
+          // Ajouter un historique de statut
+          await axios.post(`https://localhost:7148/api/statutHistorique`, {
+              ReclamationId: props.reclamationId,
+              StatusId: props.selectedStatus,
+              Motif: motif.value,
+          });
+
+          // Émettre l'événement de confirmation
+          emit('confirm', { status: props.selectedStatus, motif: motif.value });
+          emit('close');
+          window.location.reload(); // Rafraîchir la page
+      } catch (error) {
+          console.error("Erreur lors de la mise à jour du statut ou de l'ajout de l'historique :", error);
+      }
+  } else {
       alert('Veuillez préciser le motif.');
-    }
-  };
-  </script>
+  }
+};
+</script>
   
 <style scoped>
 .popup-overlay {

@@ -8,7 +8,7 @@
                 <button v-if="canDispatch" class="dispatch-button" @click="showPopup = true">Dispatcher</button>
                 <select v-if="canChangeStatus" class="status-dropdown" v-model="selectedStatus">
                     <option value="">Choisissez un statut</option>
-                    <option v-for="status in availableStatuses" :key="status.id" :value="status.name">
+                    <option v-for="status in availableStatuses" :key="status.id" :value="status.id">
                         {{ status.name }}
                     </option>
                 </select>
@@ -49,8 +49,9 @@
 
         <!-- Popup Components -->
         <Popup_Dispatching v-if="showPopup" @close="showPopup = false" />
-        <Popup_Statut v-if="showPopupStatut" :selectedStatus="selectedStatus" @close="showPopupStatut = false" @confirm="handleConfirmChange"
-    />
+        <Popup_Statut v-if="showPopupStatut" :selectedStatus="selectedStatus" :availableStatuses="availableStatuses" @close="showPopupStatut = false" 
+        @confirm="handleConfirmChange" :reclamation-id="route.params.id" />    
+        
     </div>
 </template>
 
@@ -168,7 +169,6 @@ const updateAvailableStatuses = (currentStatus) => {
             break;
         case 'En réexamen':
             availableStatuses.value = [
-                { id: 1, name: 'En cours de traitement' },
                 { id: 3, name: 'Cloturée' },
                 { id: 4, name: 'Médiation' },
                 { id: 5, name: 'Recours' },
@@ -196,8 +196,14 @@ const handleValidateStatus = () => {
     if (selectedStatus.value) {
         showPopupStatut.value = true;
     } else {
-        alert('Veuillez sélectionner un statut avant de valider.');
+        alert('Veuillez sélectionner un statut.');
     }
+};
+
+const handleConfirmChange = ({ status, motif }) => {
+    reclamation.value.statut = statuses.value.find((s) => s.id === status).name;
+    reclamation.value.motif = motif;
+    fetchReclamationDetails(); // Rafraîchir les détails de la réclamation après confirmation
 };
 
 onMounted(() => {

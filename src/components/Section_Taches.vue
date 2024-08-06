@@ -24,16 +24,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(task, index) in tasks" :key="index">
-                        <td>{{ task.designation }}</td>
-                        <td>{{ task.dispatchingHAO }}</td>
-                        <td>{{ task.dispatchingSAO }}</td>
-                        <td>{{ task.startDate }}</td>
-                        <td>{{ task.endDate }}</td>
-                        <td>{{ task.employee }}</td>
-                        <td>{{ task.importance }}</td>
-                        <td>{{ task.status }}</td>
-                        <td>{{ task.progress }}</td>
+                    <tr v-for="tache in taches" :key="tache.id">
+                        <td>{{ tache.titre }}</td>
+                        <td>{{ tache.pointDispatchingHAO }}</td>
+                        <td>{{ tache.pointDispatchingSAO }}</td>
+                        <td>{{ tache.dateDebut }}</td>
+                        <td>{{ tache.dateFin }}</td>
+                        <td>{{ tache.nomResponsable }} {{ tache.prenomResponsable }}</td>
+                        <td>{{ tache.importance }}</td>
+                        <td>{{ tache.statut }}</td>
+                        <td>{{ tache.avancement }}%</td>
                     </tr>
                 </tbody>
             </table>
@@ -42,35 +42,45 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { defineProps } from 'vue';
+
+const props = defineProps({
+  reclamationId: {
+    type: [String, Number],
+    required: true,
+  },
+});
+
+const reclamation = ref({});
+const taches = ref([]);
+
+const fetchReclamation = async () => {
+  try {
+    const response = await axios.get(`https://localhost:7148/api/reclamations/${props.reclamationId}`);
+    reclamation.value = response.data;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des détails:", error);
+  }
+};
+
+const fetchTaches = async () => {
+    try {
+        const response = await axios.get(`https://localhost:7148/api/taches/by-reclamation/${props.reclamationId}`);
+        taches.value = response.data;
+    } catch (error) {
+        console.error("Erreur lors de la récupération des taches:", error);
+    }
+};
+
+onMounted(() => {
+    fetchReclamation();
+    fetchTaches();
+});
 
 const is_expanded = ref(localStorage.getItem("is_expanded") === "false")
-
-const tasks = ref([
-    {
-        designation: 'Tâche 1',
-        dispatchingHAO: 'PIDS',
-        dispatchingSAO: 'DCD',
-        startDate: '2024-07-01',
-        endDate: '2024-07-05',
-        employee: 'Salarié 1',
-        importance: 'Haute',
-        status: 'En cours',
-        progress: '50%'
-    },
-    {
-        designation: 'Tâche 2',
-        dispatchingHAO: 'IG',
-        dispatchingSAO: 'SUPPORT',
-        startDate: '2024-07-06',
-        endDate: '2024-07-10',
-        employee: 'Salarié 2',
-        importance: 'Moyenne',
-        status: 'Terminée',
-        progress: '100%'
-    }
-    // Ajoutez d'autres tâches si nécessaire
-])
 
 const ToggleSection = () => {
     is_expanded.value = !is_expanded.value
