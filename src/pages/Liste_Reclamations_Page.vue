@@ -53,8 +53,7 @@
               <div class="action-menu" @mouseleave="closeDropdown">
 
                 <button class="action-menu-button" @click="toggleDropdown">
-                  <span class="action">Action</span>
-                  <span class="material-icons">arrow_drop_down</span>
+                  <span class="material-icons">more_vert</span>
                 </button>
 
                 <ul v-if="dropdownOpen" class="dropdown">
@@ -69,9 +68,9 @@
                     </router-link>
                   </li>
                   <li>
-                    <router-link :to="`/`" class="button">
+                    <a @click="showPopupDispatching" class="button">
                       <span class="text">Dispatcher</span>
-                    </router-link>
+                    </a>
                   </li>
                   <li>
                     <router-link :to="`/`" class="button">
@@ -108,24 +107,31 @@
           <span>réclamations par page</span>
         </div>
       </div>
+
     </div>
+
+    <Popup_Dispatching v-if="isPopupVisible" @close="isPopupVisible = false" />
+
   </div>
 </template>
 
 <script>
 import FiltreComponent from '@/components/Filtre_Component.vue';
+import Popup_Dispatching from '@/components/Popup_Dispatching.vue';
 import axios from 'axios';
 
 export default {
   name: 'Liste_Reclamations_Page',
   components: {
-    FiltreComponent
+    FiltreComponent,
+    Popup_Dispatching
   },
   data() {
     return {
       sortBy: 'reference',
       sortDirection: 'asc',
       isFilterSidebarVisible: false,
+      isPopupVisible: false,
       dropdownOpen: false,
       searchQuery: '',
       filters: {
@@ -212,6 +218,9 @@ export default {
           return '';
       }
     },
+    showPopupDispatching() {
+      this.isPopupVisible = true;
+    }
   }
 };
 </script>
@@ -311,7 +320,6 @@ export default {
   width: 30rem;
   padding: 0.5rem;
   margin: 0.5rem 0;
-  margin-left: 0.3rem;
   font-size: 14px;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -347,28 +355,24 @@ export default {
 }
 
 .action-menu-button {
-  background-color: rgb(0, 131, 212);
+  justify-content: center;
   border: none;
-  color: #ffffff;
+  border-radius: 20px;
+  color: #000000;
   cursor: pointer;
   display: flex;
   align-items: center;
   padding: 0.5rem 0.5rem;
-  width: 100%;
   transition: 0.2s ease-in-out; /* Transition pour le fond */
 }
 
 .action-menu-button:hover {
-  background-color: rgba(0, 131, 212, 0.659);
-}
-
-.action-menu-button .action {
-  margin-right: 0.5rem;
+  background-color: rgb(195, 195, 195);
 }
 
 .action-menu-button .material-icons {
-  margin-left: auto; /* Place l'icône à droite du bouton */
-  transition: transform 0.3s ease; /* Transition pour la rotation */
+  font-size: 20px;
+  transition: transform 0.2s ease; /* Transition pour la rotation */
 }
 
 .dropdown {
@@ -379,11 +383,11 @@ export default {
   list-style: none;
   background-color: white;
   padding: 0;
-  margin: 0;
-  width: 100%;
+  width: 130px;
   border: 1px solid rgb(175, 175, 175);
   display: none; /* Par défaut, le menu est caché */
 }
+
 
 .action-menu:hover .dropdown {
   display: block;
@@ -394,12 +398,16 @@ export default {
   text-decoration: none;
   color: black;
   display: block;
-  padding: 0.7rem;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.dropdown li span {
+  margin-left: 15px;
 }
 
 .dropdown li a:hover {
-  background-color: rgb(0, 131, 212);;
-  color: white;
+  background-color: rgb(221, 221, 221);;
   transition: 0.2s ease-in-out;
 }
 

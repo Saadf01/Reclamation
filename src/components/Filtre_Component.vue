@@ -1,418 +1,364 @@
 <template>
-  <div class="filter-sections">
+  <div>
+    <!-- Conteneur Principal -->
+    <div class="filters-container">
 
+      <!-- Filtre Société -->
+      <div class="filter-section">
 
+        <div class="filter-label">
+          <span class="material-icons">apartment</span>
+          <label>Société</label>
+        </div>
 
-    <!-- Sections de filtres -->
-    <div
-      class="filter-section"
-      v-for="(options, filterKey) in filterOptions"
-      :key="filterKey"
-      @mouseenter="showDropdown(filterKey)"
-      @mouseleave="hideDropdown"
-    >
-      <div class="filter-label">
-        <span class="material-icons">{{ filterIcons[filterKey] }}</span>
-        <label>{{ filterLabels[filterKey] }}</label>
+        <div class="filter-trigger">
+          <span>Sélectionner les choix</span>
+          <div class="filter-options">
+            <label class="checkbox-label" v-for="societe in societes" :key="societe.id" :value="societe.id">
+              <input type="checkbox" v-model="filters.societe">
+              {{ societe.nom }}
+            </label>
+          </div>
+        </div>
+
       </div>
-      <div class="filter-toggle" @click="toggleDropdown(filterKey)">
-        Sélectionner les choix...
+
+      <!-- Filtre Domaine -->
+      <div class="filter-section">
+
+        <div class="filter-label">
+          <span class="material-icons">category</span>
+          <label>Domaine</label>
+        </div>
+
+        <div class="filter-trigger">
+          <span>Sélectionner les choix</span>
+          <div class="filter-options">
+            <label class="checkbox-label" v-for="domaine in domaines" :key="domaine.id" :value="domaine.id">
+              <input type="checkbox" v-model="filters.domaine">
+              {{ domaine.nom }}
+            </label>
+          </div>
+        </div>
+
       </div>
-      <div v-if="dropdownVisible === filterKey" class="filter-dropdown">
-        <div v-for="option in options" :key="option.name">
-          <input
-            type="checkbox"
-            :id="`${filterKey}-${option.name}`"
-            :value="option.name"
-            :checked="filters[filterKey].includes(option.name)"
-            @change="toggleFilter(filterKey, option.name)"
-          />
-          <label :for="`${filterKey}-${option.name}`">{{ option.name }}</label>
+
+      <!-- Filtre Source -->
+      <div class="filter-section">
+
+        <div class="filter-label">
+          <span class="material-icons">source</span>
+          <label>Source</label>
+        </div>
+
+        <div class="filter-trigger">
+          <span>Sélectionner les choix</span>
+          <div class="filter-options">
+            <label class="checkbox-label" v-for="source in sources" :key="source.id" :value="source.id">
+              <input type="checkbox" v-model="filters.source">
+              {{ source.nom }}
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Filtre Statut -->
+      <div class="filter-section">
+
+        <div class="filter-label">
+          <span class="material-icons">description</span>
+          <label>Statut</label>
+        </div>
+
+        <div class="filter-trigger">
+          <span>Sélectionner les choix</span>
+          <div class="filter-options">
+            <label class="checkbox-label" v-for="status in statuses" :key="status.id" :value="status.id">
+              <input type="checkbox" v-model="filters.statut">
+              {{ status.name }}
+            </label>
+          </div>
         </div>
       </div>
+
     </div>
 
-    <!-- Sections de filtres pour les dates -->
-    <div class="filter-section" v-if="filters.type_date">
-      <div class="filter-label">
-        <span class="material-icons">today</span>
-        <label>Date de début</label>
-      </div>
-      <input type="date" v-model="filters.date_start" @change="applyFilters">
-    </div>
-    <div class="filter-section" v-if="filters.type_date">
-      <div class="filter-label">
-        <span class="material-icons">today</span>
-        <label>Date de fin</label>
-      </div>
-      <input type="date" v-model="filters.date_end" @change="applyFilters">
-    </div>
-  </div>
+    <!-- Filtres de Date -->
+    <div class="date-filters">
 
-    <!-- Div pour afficher les filtres sélectionnés -->
-    <div class="selected-filters">
-      <div v-for="(options, filterKey) in selectedFilters" :key="filterKey">
-        <div class="selected-filter-group">
-          <div class="selected-filter-label">
-            <span class="material-icons">{{ filterIcons[filterKey] }}</span>
-            <label>{{ filterLabels[filterKey] }}</label>
+      <div class="date-filters-container">
+
+        <!-- Filtre Type de Date -->
+        <div class="filter-section">
+          <div class="filter-label">
+            <span class="material-icons">description</span>
+            <label>Type de date</label>
           </div>
 
-          <div class="selected-filter-items">
-            <span v-for="option in options" :key="option" class="selected-filter-item">
-              {{ option }}
-              <span class="material-icons remove-filter" @click="removeFilter(filterKey, option)">cancel</span>
-            </span>
-          </div>
+          <div class="filter-trigger">
+            <span>Sélectionner les choix</span>
+            <div class="filter-options">
+              <label class="checkbox-label">
+                <input type="checkbox" value="Date de création">
+                Date de création
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" value="Date de déclaration">
+                Date de déclaration
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" value="Date de réception">
+                Date de réception
+              </label>
+            </div>
 
+          </div>
         </div>
-      </div>
 
+        <!-- Filtre Date de Début -->
+        <div class="filter-section">
+          <div class="filter-label">
+            <span class="material-icons">calendar_today</span>
+            <label>Date de début</label>
+          </div>
+          <input type="date" v-model="filters.date_debut" class="date-input">
+        </div>
+
+        <!-- Filtre Date de Fin -->
+        <div class="filter-section">
+          <div class="filter-label">
+            <span class="material-icons">calendar_today</span>
+            <label>Date de fin</label>
+          </div>
+          <input type="date" v-model="filters.date_fin" class="date-input">
+        </div>
+
+      </div>
     </div>
 
+    <!-- Bouton Réinitialiser -->
     <div class="filter-foot">
-      <button class="effacer" @click="resetFilters">Réinitialiser les filtres</button>
+      <button class="effacer" @click="resetFilters">Réinitialiser</button>
     </div>
-    
+
+  </div>
 </template>
 
 <script>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+
 export default {
-  name: 'FiltreComponent',
-  props: {
-    isVisible: {
-      type: Boolean,
-      required: true
-    }
-  },
-  data() {
-    return {
-      filters: {
+  name: 'FiltreSidebar',
+  setup() {
+    const filters = ref({
+      societe: [],
+      domaine: [],
+      source: [],
+      statut: [],
+      date_debut: '',
+      date_fin: ''
+    });
+
+    const statuses = ref([]);
+    const domaines = ref([]);
+    const societes = ref([]);
+    const sources = ref([]);
+
+    const resetFilters = () => {
+      filters.value = {
         societe: [],
         domaine: [],
         source: [],
-        support: [],
         statut: [],
-        reception_bo: [],
-        type_date: [],
-        date_start: '',
-        date_end: ''
-      },
-      dropdownVisible: null, // Pour gérer la visibilité de la div flottante
-      filterOptions: {
-        societe: [
-          { name: 'Holding Al Omrane' },
-          { name: 'Al Omrane Tanger-Tétouan-Al Hoceïma' },
-          { name: 'Al Omrane Casablanca - Settat' },
-          { name: 'Al Omrane Fès Meknès' },
-          { name: 'Al Omrane Darâa Tafilalet' },
-          { name: 'Al Omrane Région de l\'Oriental' },
-          { name: 'Al Omrane Marrakech Safi' },
-          { name: 'Al Omrane Souss Massa' },
-          { name: 'Al Omrane Al Janoub' },
-          { name: 'Al Omrane Beni Mellal Khenifra' },
-          { name: 'Al Omrane Rabat-Salé-Kénitra' }
-        ],
-        domaine: [
-          { name: 'Relation avec l\'agent d\'accueil' },
-          { name: 'Accueil - Renseignements' },
-          { name: 'Accès à l\'information' },
-          { name: 'Relation fournisseur de service' },
-          { name: 'Acquisition d\'un produit' },
-          { name: 'Relations PPP' },
-          { name: 'Relations clients' },
-          { name: 'Service après vente' },
-          { name: 'Relation prestataires techniques' },
-          { name: 'Autres affaires techniques' },
-          { name: 'Relation ayants droits fonciers' },
-          { name: 'Etablissement de TF individuels' },
-          { name: 'Affaires financières' },
-          { name: 'Affaires juridiques' },
-          { name: 'Affaires sociales et sociétales' },
-          { name: 'Affaires administratives' },
-          { name: 'Dénonciation, corruption et fraudes' },
-          { name: 'Autres' }
-        ],
-        reception_bo: [
-          { name: 'HAO' },
-          { name: 'SAO' }
-        ],
-        source: [
-          { name: 'Réclamant' },
-          { name: 'Médiateur du Royaume' },
-          { name: 'Administration' },
-          { name: 'Société civile' },
-          { name: 'chikaya.com' },
-          { name: 'Autre' }
-        ],
-        support: [
-          { name: 'Courrier' },
-          { name: 'Contact Direct (Fiche)' },
-          { name: 'Téléphone (Standard)' },
-          { name: 'Centre d\'appels' },
-          { name: 'Site Web' },
-          { name: 'Autre' }
-        ],
-        statut: [
-          { name: 'Initié' },
-          { name: 'En cours de traitement' },
-          { name: 'Cloturée' },
-          { name: 'Médiation' },
-          { name: 'Recours' },
-          { name: 'Contentieux' },
-          { name: 'En réexamen' },
-          { name: 'Erronée' }
-        ],
-        type_date: [
-          { name: 'Date de création'},
-          { name: 'Date de récéption'},
-          { name: 'Date de déclaration'}
-        ]
-      },
-      filterIcons: {
-        societe: 'apartment',
-        domaine: 'category',
-        reception_bo: 'domain',
-        source: 'source',
-        support: 'mail',
-        statut: 'task',
-        type_date: 'today',
-        date_start: 'today',
-        daye_end: 'today'
-      },
-      filterLabels: {
-        societe: 'Société',
-        domaine: 'Domaine',
-        reception_bo: 'Reception B.O.',
-        source: 'Source',
-        support: 'Support',
-        statut: 'Statut',
-        type_date: 'Type de date'
+        date_debut: '',
+        date_fin: ''
+      };
+    };
+
+    const fetchStatuses = async () => {
+      try {
+        const response = await axios.get('https://localhost:7148/api/statuts');
+        statuses.value = response.data;
+      } catch (error) {
+        console.error("Erreur lors de la récupération des statuts:", error);
       }
     };
-  },
-  computed: {
-    selectedFilters() {
-      const result = {};
-      for (const [key, options] of Object.entries(this.filters)) {
-        if (options.length > 0) {
-          if (key === 'date_declaration' || key === 'date_reception') {
-            if (options) {
-              result[key] = [options];
-            }
-          } else if (key !== 'date_declaration' && key !== 'date_reception') {
-            result[key] = options;
-          }
-        }
+
+    const fetchSocietes = async () => {
+      try {
+        const response = await axios.get('https://localhost:7148/api/societes');
+        societes.value = response.data;
+      } catch (error) {
+        console.error("Erreur lors de la récupération des societes:", error);
       }
-      return result;
-    }
-  },
-  methods: {
-    resetFilters() {
-      this.filters = {
-        societe: [],
-        domaine: [],
-        source: [],
-        support: [],
-        statut: [],
-        reception_bo: [],
-        type_date: [],
-      };
-      this.$emit('reset-filters');
-    },
-    applyFilters() {
-      this.$emit('apply-filters', this.filters);
-    },
-    toggleFilter(filterKey, optionName) {
-      const index = this.filters[filterKey].indexOf(optionName);
-      if (index === -1) {
-        this.filters[filterKey].push(optionName);
-      } else {
-        this.filters[filterKey].splice(index, 1);
+    };
+
+    const fetchDomaines = async () => {
+      try {
+        const response = await axios.get('https://localhost:7148/api/domaines');
+        domaines.value = response.data;
+      } catch (error) {
+        console.error("Erreur lors de la récupération des domaines:", error);
       }
-      this.applyFilters();
-    },
-    toggleDropdown(filterKey) {
-      this.dropdownVisible = this.dropdownVisible === filterKey ? null : filterKey;
-    },
-    showDropdown(filterKey) {
-      this.dropdownVisible = filterKey;
-    },
-    hideDropdown() {
-      this.dropdownVisible = null;
-    },
-    removeFilter(filterKey, optionName) {
-      if (filterKey === 'date_declaration' || filterKey === 'date_reception') {
-        this.filters[filterKey] = '';
-      } else {
-        const index = this.filters[filterKey].indexOf(optionName);
-        if (index !== -1) {
-          this.filters[filterKey].splice(index, 1);
-        }
+    };
+
+    const fetchSources = async () => {
+      try {
+        const response = await axios.get('https://localhost:7148/api/sources');
+        sources.value = response.data;
+      } catch (error) {
+        console.error("Erreur lors de la récupération des sources:", error);
       }
-      this.applyFilters();
-    }
+    };
+
+    onMounted(() => {
+      fetchStatuses();
+      fetchSocietes();
+      fetchDomaines();
+      fetchSources();
+    });
+
+    return {
+      filters,
+      statuses,
+      societes,
+      domaines,
+      sources,
+      resetFilters
+    };
   }
 };
 </script>
 
-<style >
-.filter-sections {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 0.3rem;
-}
 
-.selected-filters {
-  padding: 1rem;
-}
+<style lang="scss" scoped>
+  .filters-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
 
-.selected-filter-group {
-  margin-bottom: 0.2rem;
-}
+  .filter-section {
+    flex: 1 1 calc(25% - 1rem);
+  }
 
-.selected-filter-label {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-  gap: 5px;
-}
+  .filter-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    gap: 0.6rem;
+  }
 
-.selected-filter-label .material-icons {
-  color: rgb(67, 190, 0);
-}
+  .filter-label .material-icons {
+    color: rgb(30, 72, 197);
+    font-size: 20px;
+  }
 
-.selected-filter-label label {
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-}
+  .filter-label label {
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+  }
 
-.selected-filter-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  font-size: 13px;
-}
+  .filter-trigger {
+    position: relative;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 7px;
+    background: #ffffff;
+    width: 100%;
+  }
 
-.selected-filter-item {
-  background-color: #f1f1f1;
-  padding: 0.3rem 0.6rem;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-}
+  .filter-trigger span {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    color: #2b2b2bd6;
+  }
 
-.remove-filter {
-  cursor: pointer;
-  margin-left: 0.5rem;
-  color: grey;
-  transition: 0.2s ease-out;
-}
+  .filter-options {
+    display: none;
+    position: absolute;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 0.5rem;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 100%;
+    top: 100%;
+    left: 0;
+  }
 
-.remove-filter:hover {
-  cursor: pointer;
-  margin-left: 0.5rem;
-  color: rgb(255, 0, 0);
-}
+  .filter-trigger:hover .filter-options,
+  .filter-trigger:focus-within .filter-options {
+    display: block;
+  }
 
-.filter-section {
-  flex: 1 1 18%;
-  min-width: 200px;
-  position: relative;
-  transition: 0.2s ease-out;
-}
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    font-size: 13px;
+    cursor: pointer;
+  }
 
-.filter-label {
-  margin-bottom: 0.5rem;
-  gap: 0.6rem;
-  display: flex;
-}
+  .checkbox-label input[type="checkbox"] {
+    margin-right: 0.5rem;
+  }
 
-.filter-label .material-icons {
-  color: rgb(30, 72, 197);
-  font-size: 18px;
-}
+  .date-filters {
+    margin-top: 1rem;
+  }
 
-.filter-label label {
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-}
+  .date-filters-container {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
 
-.filter-toggle {
-  cursor: pointer;
-  color: rgb(92, 92, 92);
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  background-color: #fff;
-  font-size: 14px;
-}
+  .date-filters-container .filter-section {
+    flex: 1 1 calc(33% - 1rem);
+  }
 
-.filter-dropdown {
-  position: absolute;
-  left: 0;
-  z-index: 10;
-  width: 100%;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  padding: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-top: none;
-}
+  .date-input {
+    width: 100%;
+    border: 1px solid #ddd;
+    padding: 0.43rem;
+    font-family: 'Poppins', sans-serif;
+    border-radius: 5px;
+    color: #2b2b2bd6;
+  }
 
-.filter-dropdown input[type="checkbox"] {
-  margin-right: 0.5rem;
-}
+  .date-input:hover {
+    border-color: #000;
+  }
 
-.filter-dropdown label {
-  font-size: 13px;
-}
+  .filter-foot {
+    display: flex;
+    justify-content: right;
+    padding: 1rem;
+    gap: 5rem;
+  }
 
-.filter-foot {
-  display: flex;
-  justify-content: right;
-  width: 100%;
-  margin-bottom: 2rem;
-}
+  .effacer {
+    padding: 0.5rem 1rem;
+    border: 1px solid;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #f44336;
+    color: white;
+  }
 
-.filter-foot .effacer {
-  padding: 6px 10px;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  border-radius: 0.5rem;
-  border: 1px solid red;
-  color: red;
-  transition: 0.2s ease-out;
-}
+  .effacer:hover {
+    color: #f44336;
+    background-color: white;
+    border: 1px solid #f44336;
+  }
 
-.filter-foot .effacer:hover {
-  cursor: pointer;
-  color: white;
-  background-color: rgb(255, 0, 0);
-}
-
-.filter-section input[type="checkbox"] {
-  cursor: pointer;
-  transform: scale(1.4);
-  margin-left: 0.5rem;
-  margin-bottom: 10px;
-}
-
-.filter-section input[type="checkbox"]:hover,
-.filter-section input[type="date"]:hover {
-  border: 1px solid #000;
-}
-
-.filter-section input[type="date"] {
-  cursor: pointer;
-  border: 1px solid #ddd;
-  padding: 0.325rem 1rem;
-  font-family: 'Poppins', sans-serif;
-  width: 100%;
-}
-
-.filter-section input[type="date"]:hover {
-  border-color: #000;
-}
 </style>
