@@ -64,7 +64,7 @@ onBeforeUnmount(() => {
   align-items: center;
   position: fixed;
   width: 100%;
-  z-index: 1000; /* Assure que le header est au-dessus du reste du contenu */
+  z-index: 1500; /* Assure que le header est au-dessus du reste du contenu */
   background-color: #049004;
 }
 

@@ -9,10 +9,10 @@
         </div>
 
         <div class="donnees">
-            <p><strong>Société :</strong> 029202393</p>
-            <p><strong>Agence commerciale :</strong> 029202393</p>
-            <p><strong>N° de dossier AlWassit (Si médiateur) :</strong> </p>
-            <p><strong>Déstinataire de la réponse :</strong> 029202393</p>
+            <p><strong>Société :</strong> {{reclamation.societe}}</p>
+            <p><strong>Agence commerciale :</strong> {{reclamation.agence}}</p>
+            <p><strong>N° de dossier AlWassit (Si médiateur) :</strong> {{reclamation.numeroDossierMediateur}}</p>
+            <p><strong>Déstinataire de la réponse :</strong> {{reclamation.destinataireMediateur}}</p>
         </div>
         
     </div>
@@ -20,7 +20,29 @@
 
 <script setup>
 
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { defineProps } from 'vue';
+
+const props = defineProps({
+  reclamationId: {
+    type: [String, Number],
+    required: true,
+  },
+});
+
+const reclamation = ref({});
+
+const fetchReclamation = async () => {
+  try {
+    const response = await axios.get(`https://localhost:7148/api/reclamations/${props.reclamationId}`);
+    reclamation.value = response.data;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des détails:", error);
+  }
+};
+
+onMounted(fetchReclamation);
 
 const is_expanded = ref(localStorage.getItem("is_expanded") === "false")
 

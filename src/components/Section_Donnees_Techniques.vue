@@ -9,54 +9,42 @@
         </div>
 
         <div class="donnees">
-            <p><strong>Domaine :</strong> 029202393</p>
-            <p><strong>Réception Bureau d'ordre :</strong> HAO</p>
-            <p><strong>Source :</strong> 029202393</p>
-            <p><strong>Support :</strong> 029202393</p>
-            <p><strong>Type du réclamant :</strong> 029202393</p>
+            <p><strong>Domaine :</strong> {{ reclamation.domaine }}</p>
+            <p><strong>Réception Bureau d'ordre :</strong> {{ reclamation.receptionBo }}</p>
+            <p><strong>Source :</strong> {{ reclamation.source }}</p>
+            <p><strong>Support :</strong> {{ reclamation.support }}</p>
+            <p><strong>Type du réclamant :</strong> {{ reclamation.reclamantType }}</p>
         </div>
         
     </div>
-     <!-- Section Données techniques -->
-      
-      
-
-
-      <!-- Section traitement reclamation 
-      <div class="blue-borders">
-        <h2>Détail traitement réclamation</h2>
-        <div class="rec-detail">
-          <div class="input-box">
-            <label for="disp" class="detail">Tâche</label>
-            <input type="text" id="disp" v-model="formState.tache">
-          </div>
-          <div class="input-box">
-            <label for="resp-tach" class="detail">Téléphone du responsable de la tâche</label>
-            <input type="text" id="resp-tach" v-model="formState.telephoneResponsableTache">
-          </div>
-          <div class="input-box">
-            <label for="hao" class="detail">Entite</label>
-            <select id="hao" v-model="formState.centreTraitementhao" @change="clearSortBy">
-              <option value="pid">PID</option>
-            </select>
-          </div>
-          <div class="input-box">
-            <label for="dao" class="detail">Centre de traitement DAO</label>
-            <select id="dao" v-model="formState.centreTraitementdao" @change="clearSortBy">
-              <option value="pid">PID</option>
-            </select>
-          </div>
-          <div class="input-box">
-            <label for="relai" class="detail">Numéro de relais réclamation</label>
-            <input type="text" id="relai" v-model="formState.numeroRelais">
-          </div>
-        </div>
-      </div>-->
+     
 </template>
 
 <script setup>
 
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { defineProps } from 'vue';
+
+const props = defineProps({
+  reclamationId: {
+    type: [String, Number],
+    required: true,
+  },
+});
+
+const reclamation = ref({});
+
+const fetchReclamation = async () => {
+  try {
+    const response = await axios.get(`https://localhost:7148/api/reclamations/${props.reclamationId}`);
+    reclamation.value = response.data;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des détails:", error);
+  }
+};
+
+onMounted(fetchReclamation);
 
 const is_expanded = ref(localStorage.getItem("is_expanded") === "false")
 
